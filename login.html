@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Predictive Analytics – Sign In</title>
+  <style>
+    :root {
+      --blue: rgb(37,99,235,.6);
+      --green: #10b981;
+      --white: #fff;
+      --ink: #0f172a;
+      --slate: #6b7280;
+    }
+    * { box-sizing: border-box }
+    html, body { height: 100% }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans";
+      color: var(--ink);
+      background: var(--white);
+      line-height: 1.5;
+    }
+    .shell {
+      min-height: 100dvh;
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width:960px) {
+      .shell { grid-template-columns: 1fr 1fr; }
+    }
+    .hero {
+      background: var(--blue);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 20px;
+    }
+    .hero-inner { max-width: 560px; }
+    .h1 {
+      margin: 16px 0 12px;
+      font-weight: 1000;
+      letter-spacing: -.01em;
+      line-height: 1.2;
+      font-size: 32px;
+    }
+    @media (min-width:960px) { .h1 { font-size: 40px } }
+    .lead {
+      color: #e5e7eb;
+      margin: 0 0 16px;
+      font-size: 20px;
+      font-weight: 500;
+    }
+    .points {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 16px;
+      display: grid;
+      gap: 8px;
+    }
+    .points li {
+      display: grid;
+      grid-template-columns: 20px 1fr;
+      gap: 10px;
+      align-items: start;
+      font-size: 18px;
+      color: #f3f4f6;
+    }
+    .points li::before {
+      content: "★";
+      color: var(--green);
+      line-height: 1;
+      margin-top: 2px;
+    }
+    .auth {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 20px;
+    }
+    .card {
+      width: 100%;
+      max-width: 440px;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(15,23,42,.08);
+    }
+    .card h2 {
+      margin: 0 0 2px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .card p.sub {
+      margin: 0 0 16px;
+      font-size: 12px;
+      color: var(--slate);
+    }
+    .segmented { margin-bottom: 14px; position: relative; }
+    .segmented input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .switch {
+      position: relative;
+      display: flex;
+      gap: 8px;
+      background: rgba(37,99,235,.10);
+      padding: 6px;
+      border-radius: 9999px;
+      border: 1px solid rgba(37,99,235,.18);
+    }
+    .switch .opt {
+      flex: 1;
+      text-align: center;
+      font-size: 14px;
+      padding: 10px 12px;
+      border-radius: 9999px;
+      color: var(--slate);
+      user-select: none;
+      cursor: pointer;
+      position: relative;
+      z-index: 1;
+      transition: color .2s;
+    }
+    .switch .pill {
+      position: absolute;
+      top: 6px;
+      bottom: 6px;
+      left: 6px;
+      width: calc(50% - 6px);
+      border-radius: 9999px;
+      background: #fff;
+      box-shadow: 0 6px 16px rgba(15,23,42,.10);
+      transition: transform .25s;
+    }
+    #s-in:checked ~ .switch .opt.one { color: var(--blue); font-weight: 600; }
+    #s-up:checked ~ .switch .opt.two { color: var(--blue); font-weight: 600; }
+    #s-up:checked ~ .switch .pill { transform: translateX(100%); }
+    #s-in:checked ~ .switch .pill { transform: translateX(0%); }
+    .forms>form { display: none; }
+    #s-in:checked ~ .forms #form-signin { display: block; }
+    #s-up:checked ~ .forms #form-signup { display: block; }
+    .field { margin-bottom: 12px; }
+    .label { display: block; font-size: 12px; color: var(--slate); margin: 0 0 6px; }
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      display: block !important;
+      width: 100% !important;
+      min-height: 44px !important;
+      padding: 12px !important;
+      border-radius: 10px !important;
+      border: 2px solid #9ca3af !important;
+      background: #ffffff !important;
+      color: #0f172a !important;
+      outline: none !important;
+      box-shadow: none !important;
+      appearance: none !important;
+    }
+    input[type="text"]::placeholder,
+    input[type="email"]::placeholder,
+    input[type="password"]::placeholder {
+      color: #9ca3af;
+    }
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+      border-color: var(--blue) !important;
+      box-shadow: 0 0 0 3px rgba(37,99,235,.12) !important;
+    }
+    .btn {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 14px;
+      cursor: pointer;
+      color: #fff;
+      background: var(--blue);
+    }
+    .btn:hover { filter: brightness(.95); }
+    .muted {
+      font-size: 12px;
+      color: var(--slate);
+      text-align: center;
+      margin-top: 10px;
+    }
+    .muted a {
+      color: var(--blue);
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .muted a:hover { text-decoration: underline; }
+    @media (max-width:959px) {
+      .hero { padding: 28px 18px; }
+      .auth { padding: 24px 16px; }
+      .card { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="hero" aria-label="Platform value proposition">
+      <div class="hero-inner">
+        <h1 class="h1">Predict & boost your star ratings</h1>
+        <p class="lead">
+          Forecast ratings across all quality measures, identify improvement opportunities,
+          and get recommendations that maximize outcomes while controlling cost.
+        </p>
+        <ul class="points">
+          <li>Measure-level forecasts with confidence intervals.</li>
+          <li>Targeted interventions prioritized by ROI.</li>
+          <li>Cost-aware optimization to sustain performance.</li>
+        </ul>
+      </div>
+    </aside>
+    <main class="auth" aria-label="Authentication">
+      <div class="card" role="region" aria-labelledby="auth-title">
+        <h2 id="auth-title">Welcome</h2>
+        <p class="sub" id="auth-subtitle">Sign in to your account</p>
+        <div class="segmented">
+          <input type="radio" id="s-in" name="auth-type" checked>
+          <input type="radio" id="s-up" name="auth-type">
+          <div class="switch">
+            <label for="s-in" class="opt one">Sign In</label>
+            <label for="s-up" class="opt two">Sign Up</label>
+            <span class="pill"></span>
+          </div>
+        </div>
+        <div class="forms">
+          <form id="form-signin" aria-labelledby="signin-title">
+            <div class="field">
+              <label class="label" for="signin-user">Username</label>
+              <input type="text" id="signin-user" name="username" placeholder="Enter username" required />
+            </div>
+            <div class="field">
+              <label class="label" for="signin-pass">Password</label>
+              <input type="password" id="signin-pass" name="password" placeholder="Enter password" required />
+            </div>
+            <button class="btn" type="submit">Sign In</button>
+            <p class="muted">Don't have an account? <a href="#" id="switch-to-signup">Sign up</a></p>
+          </form>
+          <form id="form-signup" aria-labelledby="signup-title">
+            <div class="field">
+              <label class="label" for="signup-user">Username</label>
+              <input type="text" id="signup-user" name="username" placeholder="Choose a username" required />
+            </div>
+            <div class="field">
+              <label class="label" for="signup-email">Work email</label>
+              <input type="email" id="signup-email" name="email" placeholder="you@company.com" required />
+            </div>
+            <div class="field">
+              <label class="label" for="signup-pass">Password</label>
+              <input type="password" id="signup-pass" name="password" placeholder="Create a strong password" required />
+            </div>
+            <div class="field">
+              <label class="label" for="signup-confirm">Confirm Password</label>
+              <input type="password" id="signup-confirm" name="confirm" placeholder="Re-enter password" required />
+            </div>
+            <button class="btn" type="submit">Create Account</button>
+            <p class="muted">Already have an account? <a href="#" id="switch-to-signin">Sign in</a></p>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const signInRadio = document.getElementById('s-in');
+      const signUpRadio = document.getElementById('s-up');
+      const signInForm = document.getElementById('form-signin');
+      const signUpForm = document.getElementById('form-signup');
+      const authTitle = document.getElementById('auth-title');
+      const authSubtitle = document.getElementById('auth-subtitle');
+      const switchToSignup = document.getElementById('switch-to-signup');
+      const switchToSignin = document.getElementById('switch-to-signin');
+      function updateFormVisibility() {
+        if (signInRadio.checked) {
+          signInForm.style.display = 'block';
+          signUpForm.style.display = 'none';
+          authTitle.textContent = 'Welcome back';
+          authSubtitle.textContent = 'Sign in to your account';
+        } else {
+          signInForm.style.display = 'none';
+          signUpForm.style.display = 'block';
+          authTitle.textContent = 'Create account';
+          authSubtitle.textContent = 'Get started with Predictive Analytics';
+        }
+      }
+      signInRadio.addEventListener('change', updateFormVisibility);
+      signUpRadio.addEventListener('change', updateFormVisibility);
+      switchToSignup.addEventListener('click', function(e) {
+        e.preventDefault();
+        signUpRadio.checked = true;
+        updateFormVisibility();
+      });
+      switchToSignin.addEventListener('click', function(e) {
+        e.preventDefault();
+        signInRadio.checked = true;
+        updateFormVisibility();
+      });
+      updateFormVisibility();
+    });
+  </script>
+</body>
+</html>
