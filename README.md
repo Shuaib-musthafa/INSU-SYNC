@@ -15,7 +15,7 @@ In today's healthcare landscape, organizations face the dual challenge of improv
 - Identify areas for improvement  
 - Receive actionable recommendations  
 
-A key highlight for executives is the **"What-If Calculator"**, powered by the **Gemini API**, which simulates intervention strategies to estimate potential impacts on performance scores and financial outcomes.  
+A key highlight for executives is the **"What-If Calculator"**,  which simulates intervention strategies to estimate potential impacts on performance scores and financial outcomes.And ** "recommendation" ** using Gemini APi.
 
 ---
 
