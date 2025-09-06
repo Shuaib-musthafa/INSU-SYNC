@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CMS • Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      /* Updated color scheme to match dashboard page */
+      --primary: #2596be;
+      --secondary: #1e7a9b;
+      --accent: #ffb74d;
+      --dark: #1a1a2e;
+      --light: #ffffff;
+      --cream: #fef7f0;
+      --gray: #686d76;
+      --light-gray: #f5f5f5;
+      
+      --background: #ffffff;
+      --foreground: var(--dark);
+      --card: #f8fafc;
+      --card-foreground: var(--dark);
+      --primary-foreground: var(--light);
+      --muted: #f8fafc;
+      --muted-foreground: var(--gray);
+      --border: #e5e7eb;
+
+      --glass-light: rgba(255, 255, 255, 0.25);
+      --glass-border: rgba(255, 255, 255, 0.2);
+      --glass-shadow: rgba(31, 38, 135, 0.37);
+      
+      --brand: var(--primary);
+      --bg: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%);
+      --surface: rgba(255, 255, 255, 0.8);
+      --text: var(--foreground);
+
+      --brand-10: rgba(37, 150, 190, 0.08);
+      --brand-15: rgba(37, 150, 190, 0.15);
+      --brand-20: rgba(37, 150, 190, 0.2);
+      --text-08: rgba(26, 26, 46, 0.08);
+      --text-12: rgba(26, 26, 46, 0.12);
+
+      --radius: 16px;
+      --radius-sm: 10px;
+      --shadow: 0 12px 36px var(--text-12);
+      --focus-ring: 0 0 0 3px var(--brand-15);
+    }
+    
+    [data-theme="dark"] {
+      --background: #0f172a;
+      --foreground: #f8fafc;
+      --card: #1e293b;
+      --card-foreground: #f8fafc;
+      --primary-foreground: #f8fafc;
+      --muted: #1e293b;
+      --muted-foreground: #94a3b8;
+      --border: #334155;
+      
+      --glass-light: rgba(30, 41, 59, 0.5);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-shadow: rgba(2, 6, 23, 0.5);
+      
+      --brand-10: rgba(37, 150, 190, 0.15);
+      --brand-15: rgba(37, 150, 190, 0.25);
+      --brand-20: rgba(37, 150, 190, 0.3);
+      --text-08: rgba(248, 250, 252, 0.08);
+      --text-12: rgba(248, 250, 252, 0.12);
+      
+      --bg: linear-gradient(135deg, #0c4a6e 0%, #1e3a8a 100%);
+      --surface: rgba(30, 41, 59, 0.8);
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      background-attachment: fixed;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    html, body, h1, h2, h3, h4, p { margin: 0; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+    img { display: block; max-width: 100%; height: auto; }
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+    .app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .main-wrapper {
+      display: flex;
+      flex: 1;
+    }
+    
+    .topbar {
+      height: 70px;
+      background: var(--glass-light);
+      border-bottom: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 6px 20px var(--text-08);
+      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 0.5px;
+      color: var(--dark);
+    }
+    .logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: grid;
+      place-items: center;
+      box-shadow: 0 4px 15px rgba(37, 150, 190, 0.3);
+    }
+    .logo svg { width: 16px; height: 16px; fill: white; }
+    .top-right { display: flex; align-items: center; gap: 16px; }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid var(--glass-border);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--primary));
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+    }
+    .user-details {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .username {
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .role {
+      font-size: 12px;
+      opacity: 0.7;
+    }
+    .logout-btn {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+    }
+    .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .content {
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      height: calc(100vh - 70px);
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Chatbot Styles */
+    .chatbot-container {
+      background: var(--surface);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .chatbot-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--glass-border);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+    }
+
+    .chatbot-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .chatbot-subtitle {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      white-space: pre-wrap;
+    }
+
+    .message {
+      display: flex;
+      gap: 12px;
+      max-width: 80%;
+      animation: fadeInUp 0.3s ease-out;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .message-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .message.bot .message-avatar {
+      background: var(--brand);
+      color: white;
+    }
+
+    .message.user .message-avatar {
+      background: var(--bg);
+      border: 1px solid var(--glass-border);
+      color: var(--text);
+    }
+
+    .message-content {
+      background: var(--surface);
+      border: 1px solid var(--glass-border);
+      border-radius: 18px;
+      padding: 12px 16px;
+      position: relative;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .message.bot .message-content {
+      background: var(--light-gray);
+      border-color: #e2e8f0;
+    }
+
+    .message.user .message-content {
+      background: var(--brand);
+      color: white;
+      border-color: var(--brand);
+    }
+
+    .chat-input-container {
+      padding: 20px 24px;
+      border-top: 1px solid var(--glass-border);
+      background: var(--surface);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .chat-input-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--light);
+      border: 2px solid var(--border);
+      border-radius: 25px;
+      padding: 12px 20px;
+      transition: border-color 0.3s ease;
+    }
+
+    .chat-input-wrapper:focus-within {
+      border-color: var(--brand);
+      box-shadow: var(--focus-ring);
+    }
+
+    .chat-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      background: transparent;
+      color: var(--text);
+    }
+
+    .chat-input::placeholder {
+      color: #9CA3AF;
+    }
+
+    .send-button {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--brand);
+      color: white;
+      border: none;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .send-button:hover {
+      background: var(--secondary);
+      transform: scale(1.05);
+    }
+
+    .send-button:disabled {
+      background: #9CA3AF;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .welcome-message {
+      text-align: center;
+      padding: 40px 20px;
+      color: #6B7280;
+    }
+
+    .welcome-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 16px;
+      color: var(--brand);
+    }
+
+    .typing-indicator {
+      display: flex;
+      gap: 4px;
+      padding: 8px 0;
+    }
+
+    .typing-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #9CA3AF;
+      animation: typing 1.4s infinite ease-in-out;
+    }
+
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes typing {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-10px); }
+    }
+    
+    .floating-icon {
+      position: fixed;
+      color: rgba(255, 255, 255, 0.1);
+      animation: float 6s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .floating-icon.icon-1 {
+      top: 20%;
+      right: 10%;
+      font-size: 3rem;
+      animation-delay: 0s;
+    }
+
+    .floating-icon.icon-2 {
+      bottom: 30%;
+      left: 5%;
+      font-size: 2rem;
+      animation-delay: 2s;
+    }
+
+    .floating-icon.icon-3 {
+      top: 60%;
+      right: 15%;
+      font-size: 2.5rem;
+      animation-delay: 4s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    @media (max-width: 720px) {
+      .topbar { padding: 0 16px; }
+      .content { padding: 16px; }
+      .message { max-width: 90%; }
+      .floating-icon { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <i class="fas fa-comment-dots floating-icon icon-1"></i>
+  <i class="fas fa-robot floating-icon icon-2"></i>
+  <i class="fas fa-brain floating-icon icon-3"></i>
+
+    <header class="topbar">
+    <div class="brand">
+      <div class="logo">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Brand Logo" />
+      </div>
+      <span>INSU-SYNC</span>
+    </div>
+
+    <div class="top-right">
+      <div class="user-info">
+        <div class="avatar">
+          <span id="username-avatar">{{username[0].upper() if username else 'U'}}</span>
+        </div>
+        <div class="user-details">
+          <span class="username" id="username-display">{{username or 'User'}}</span>
+        </div>
+      </div>
+      <a href="/logout" class="logout-btn">
+        <i class="fas fa-sign-out-alt"></i>
+        Logout
+      </a>
+    </div>
+  </header>
+  <div class="main-wrapper">
+    <div class="main">
+      <main class="content">
+        <div class="chatbot-container">
+          <div class="chatbot-header">
+            <h1 class="chatbot-title">AI Assistant</h1>
+            <p class="chatbot-subtitle">Ask me anything about your data and analytics</p>
+          </div>
+
+          <div class="chat-messages" id="chatMessages">
+            <div class="welcome-message">
+              <svg class="welcome-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                <path d="M13 8H7"/>
+                <path d="M17 12H7"/>
+              </svg>
+              <h3>Welcome to CMS Assistant</h3>
+              <p>I'm here to help you find the best health plans. Try typing a health condition like 'diabetes' or 'heart'.</p>
+            </div>
+          </div>
+
+          <div class="chat-input-container">
+            <div class="chat-input-wrapper">
+              <input 
+                type="text" 
+                class="chat-input" 
+                placeholder="Type your message here..."
+                id="chatInput"
+                autocomplete="off"
+              >
+              <button class="send-button" id="sendButton" aria-label="Send message">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="22" y1="2" x2="11" y2="13"/>
+                  <polygon points="22,2 15,22 11,13 2,9 22,2"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Theme-loading logic
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+  });
+
+  class ChatBot {
+    constructor() {
+      this.chatMessages = document.getElementById('chatMessages');
+      this.chatInput = document.getElementById('chatInput');
+      this.sendButton = document.getElementById('sendButton');
+      this.isTyping = false;
+      
+      this.init();
+    }
+
+    init() {
+      this.sendButton.addEventListener('click', () => this.sendMessage());
+      this.chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          this.sendMessage();
+        }
+      });
+
+      this.chatInput.addEventListener('input', () => {
+        this.sendButton.disabled = !this.chatInput.value.trim();
+      });
+
+      this.sendButton.disabled = true;
+    }
+
+    async sendMessage() {
+      const message = this.chatInput.value.trim();
+      if (!message || this.isTyping) return;
+
+      // Clear welcome message if it exists
+      const welcomeMessage = this.chatMessages.querySelector('.welcome-message');
+      if (welcomeMessage) {
+        welcomeMessage.remove();
+      }
+
+      // Add user message
+      this.addMessage(message, 'user');
+      this.chatInput.value = '';
+      this.sendButton.disabled = true;
+
+      // Show typing indicator
+      this.showTyping();
+
+      // Get response from backend
+      const response = await this.getBackendResponse(message);
+      this.hideTyping();
+      this.addMessage(response, 'bot');
+    }
+
+    addMessage(content, sender) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${sender}`;
+      
+      const avatar = document.createElement('div');
+      avatar.className = 'message-avatar';
+      
+      if (sender === 'bot') {
+        avatar.innerHTML = `
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+            <circle cx="8.5" cy="10.5" r="1.5"/>
+            <circle cx="15.5" cy="10.5" r="1.5"/>
+            <path d="M8.5 14.5c1.5 1.5 3.5 1.5 5 0"/>
+          </svg>
+        `;
+      } else {
+        avatar.innerHTML = `
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+          </svg>
+        `;
+      }
+
+      const messageContent = document.createElement('div');
+      messageContent.className = 'message-content';
+      messageContent.textContent = content;
+
+      messageDiv.appendChild(avatar);
+      messageDiv.appendChild(messageContent);
+      
+      this.chatMessages.appendChild(messageDiv);
+      this.scrollToBottom();
+    }
+
+    showTyping() {
+      this.isTyping = true;
+      const typingDiv = document.createElement('div');
+      typingDiv.className = 'message bot';
+      typingDiv.id = 'typing-message';
+      
+      typingDiv.innerHTML = `
+        <div class="message-avatar">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+            <circle cx="8.5" cy="10.5" r="1.5"/>
+            <circle cx="15.5" cy="10.5" r="1.5"/>
+            <path d="M8.5 14.5c1.5 1.5 3.5 1.5 5 0"/>
+          </svg>
+        </div>
+        <div class="message-content">
+          <div class="typing-indicator">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+          </div>
+        </div>
+      `;
+      
+      this.chatMessages.appendChild(typingDiv);
+      this.scrollToBottom();
+    }
+
+    hideTyping() {
+      const typingMessage = document.getElementById('typing-message');
+      if (typingMessage) {
+        typingMessage.remove();
+      }
+      this.isTyping = false;
+    }
+
+    async getBackendResponse(userMessage) {
+      try {
+        const response = await fetch('/get_response', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ message: userMessage }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data.response;
+      } catch (error) {
+        console.error('Error fetching response from backend:', error);
+        return "I'm sorry, I'm currently unable to connect to the server. Please try again later.";
+      }
+    }
+
+    scrollToBottom() {
+      this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+    }
+  }
+
+  // Initialize chatbot
+  document.addEventListener('DOMContentLoaded', () => {
+    new ChatBot();
+  });
+</script>
+
+</body>
+</html>

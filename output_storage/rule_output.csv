@@ -1,0 +1,41 @@
+feature,avg_percent,predicted_star
+breast cancer screening,55.48,3
+colorectal cancer screening,51.11,3
+annual flu vaccine,45.18,3
+monitoring physical activity,29.44,2
+special needs plan (snp) care management,50.39,3
+care for older adults - medication review,49.29,3
+care for older adults - pain assessment,30.16,2
+osteoporosis management in women who had a fracture,49.09,3
+diabetes care - eye exam,64.28,4
+diabetes care - blood sugar controlled,38.08,2
+controlling blood pressure,51.59,3
+reducing the risk of falling,46.0,3
+improving bladder control,24.8,2
+medication reconciliation post-discharge,46.58,3
+plan all-cause readmissions,52.48,3
+statin therapy for patients with cardiovascular disease,28.93,2
+transitions of care,48.14,3
+follow-up after emergency department visit for people with multiple high-risk chronic conditions,54.53,3
+getting needed care,32.02,2
+getting appointments and care quickly,50.9,3
+customer service,64.17,4
+rating of health care quality,31.06,2
+rating of health plan,56.5,3
+care coordination,43.78,3
+complaints about the health plan,24.97,2
+members choosing to leave the plan,46.34,3
+health plan quality improvement,54.73,3
+plan makes timely decisions about appeals,29.16,2
+reviewing appeals decisions,39.87,2
+call center - foreign language interpreter and tty availability,62.09,4
+complaints about the drug plan,28.26,2
+members choosing to leave the plan (drug plan),43.88,3
+drug plan quality improvement,44.66,3
+rating of drug plan,23.38,2
+getting needed prescription drugs,35.09,2
+mpf price accuracy,54.19,3
+medication adherence for diabetes medications,31.59,2
+medication adherence for hypertension (ras antagonists),47.4,3
+medication adherence for cholesterol (statins),52.79,3
+mtm program completion rate for cmr,32.69,2

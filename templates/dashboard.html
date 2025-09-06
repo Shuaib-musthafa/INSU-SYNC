@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CMS • Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    :root {
+      --primary: #2596be;
+      --secondary: #1e7a9b;
+      --accent: #ffb74d;
+      --dark: #1a1a2e;
+      --light: #ffffff;
+      --gray: #686d76;
+      --light-gray: #f5f5f5;
+      
+      --background: #ffffff;
+      --foreground: var(--dark);
+      --card: #f8fafc;
+      --muted: #f8fafc;
+      --muted-foreground: var(--gray);
+      --border: #e5e7eb;
+
+      --glass-light: rgba(255, 255, 255, 0.25);
+      --glass-border: rgba(255, 255, 255, 0.2);
+      
+      --brand-10: rgba(37, 150, 190, 0.08);
+      --brand-15: rgba(37, 150, 190, 0.15);
+      --text-08: rgba(26, 26, 46, 0.08);
+      --text-12: rgba(26, 26, 46, 0.12);
+
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 10px;
+
+      --shadow-md: 0 6px 20px var(--text-08);
+      --shadow-lg: 0 12px 36px var(--text-12);
+      --focus-ring: 0 0 0 3px var(--brand-15);
+    }
+
+    [data-theme="dark"] {
+      --background: #0f172a;
+      --foreground: #f8fafc;
+      --card: #1e293b;
+      --card-foreground: #f8fafc;
+      --primary-foreground: #f8fafc;
+      --muted: #1e293b;
+      --muted-foreground: #94a3b8;
+      --border: #334155;
+      
+      --glass-light: rgba(30, 41, 59, 0.5);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-shadow: rgba(2, 6, 23, 0.5);
+      
+      --brand-10: rgba(37, 150, 190, 0.15);
+      --brand-15: rgba(37, 150, 190, 0.25);
+      --brand-20: rgba(37, 150, 190, 0.3);
+      --text-08: rgba(248, 250, 252, 0.08);
+      --text-12: rgba(248, 250, 252, 0.12);
+    }
+
+    * { 
+      box-sizing: border-box; 
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--foreground);
+      background: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%);
+      background-attachment: fixed;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    
+    [data-theme="dark"] body {
+      background: linear-gradient(135deg, #0c4a6e 0%, #1e3a8a 100%);
+    }
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .app::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(37, 150, 190, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    [data-theme="dark"] .app::before {
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(37, 150, 190, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(15, 23, 42, 0.3) 0%, transparent 50%);
+    }
+
+    .topbar {
+      height: 70px;
+      background: var(--glass-light);
+      border-bottom: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-md);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 0.5px;
+      color: var(--dark);
+    }
+
+    .logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 4px 15px rgba(37, 150, 190, 0.3);
+    }
+
+    .logo img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 auto;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 12px;
+      color: var(--foreground);
+      font-weight: 500;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: var(--glass-border);
+      transform: translateY(-1px);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--light);
+      box-shadow: 0 6px 20px rgba(37, 150, 190, 0.3);
+    }
+
+    .nav-item svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid var(--glass-border);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--primary));
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .user-details {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .username {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .role {
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    .logout-btn {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+    }
+
+    .main {
+      flex: 1;
+      padding: 32px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .welcome-card {
+      background: var(--glass-light);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .welcome-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+    }
+
+    .welcome-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .welcome-text h2 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .welcome-text p {
+      color: var(--muted-foreground);
+      font-size: 16px;
+    }
+
+    .tab-container {
+      background: var(--glass-light);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .tab-header {
+      display: flex;
+      background: rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid var(--glass-border);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 16px 24px;
+      background: transparent;
+      border: none;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      color: var(--foreground);
+    }
+
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+    }
+
+    .tab-content {
+      padding: 32px;
+      min-height: 400px;
+    }
+
+    .upload-area {
+      border: 2px dashed var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 48px 32px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    .upload-area:hover {
+      border-color: var(--primary);
+      background: var(--brand-10);
+    }
+
+    .upload-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 16px;
+      color: var(--primary);
+    }
+
+    .upload-text {
+      font-size: 18px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: var(--dark);
+    }
+
+    .upload-subtext {
+      color: var(--muted-foreground);
+      margin-bottom: 24px;
+    }
+
+    .upload-btn {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 6px 20px rgba(37, 150, 190, 0.3);
+    }
+
+    .upload-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(37, 150, 190, 0.4);
+    }
+
+    .upload-btn:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .results {
+      display: none;
+      margin-top: 24px;
+    }
+
+    .results.show {
+      display: block;
+    }
+
+    .result-item {
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 16px;
+      border: 1px solid var(--glass-border);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .result-title {
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 8px;
+      color: var(--dark);
+    }
+
+    .result-meta {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+    }
+
+    .priority-high { color: #dc2626; }
+    .priority-medium { color: #d97706; }
+    .priority-low { color: #059669; }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .loading.show {
+      display: block;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(37, 150, 190, 0.2);
+      border-top: 4px solid var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .floating-icon {
+      position: fixed;
+      color: rgba(255, 255, 255, 0.1);
+      animation: float 6s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .floating-icon.icon-1 {
+      top: 20%;
+      right: 10%;
+      font-size: 3rem;
+      animation-delay: 0s;
+    }
+
+    .floating-icon.icon-2 {
+      bottom: 30%;
+      left: 5%;
+      font-size: 2rem;
+      animation-delay: 2s;
+    }
+
+    .floating-icon.icon-3 {
+      top: 60%;
+      right: 15%;
+      font-size: 2.5rem;
+      animation-delay: 4s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .star-rating {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .star-rating .star {
+      font-size: 16px;
+      color: #E5E7EB;
+      transition: color 0.2s ease;
+    }
+
+    .star-rating .star.filled {
+      color: #FFD700;
+    }
+
+    .star-rating .star.half-filled {
+      color: #FFD700;
+    }
+
+    @media (max-width: 768px) {
+      .nav-menu {
+        display: none;
+      }
+
+      .topbar {
+        padding: 0 16px;
+      }
+
+      .main {
+        padding: 16px;
+      }
+
+      .welcome-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+
+      .tab-header {
+        flex-direction: column;
+      }
+
+      .floating-icon {
+        display: none;
+      }
+    }
+
+    .message-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+
+    .message-modal.show {
+      display: flex;
+    }
+
+    .message-content {
+      background: var(--glass-light);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      padding: 32px;
+      border-radius: var(--radius-lg);
+      max-width: 400px;
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .message-content p {
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+
+    .message-close {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <i class="fas fa-chart-line floating-icon icon-1"></i>
+  <i class="fas fa-star floating-icon icon-2"></i>
+  <i class="fas fa-analytics floating-icon icon-3"></i>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Brand Logo" />
+      </div>
+      <span>INSU-SYNC</span>
+    </div>
+
+    <nav class="nav-menu">
+    <a href="/dashboard" class="nav-item">
+      <i class="fas fa-home"></i>
+      <span>Home</span>
+    </a>
+    <a href="/weak" class="nav-item">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>Weak Areas</span>
+    </a>
+    <a href="/simulator" class="nav-item">
+      <i class="fas fa-calculator"></i>
+      <span>Simulator</span>
+    </a>
+    <a href="/reports" class="nav-item">
+      <i class="fas fa-chart-bar"></i>
+      <span>Reports</span>
+    </a>
+    <a href="/settings" class="nav-item">
+      <i class="fas fa-cog"></i>
+      <span>Settings</span>
+    </a>
+  </nav>
+
+    <div class="top-right">
+      <div class="user-info">
+        <div class="avatar">
+          <span id="username-avatar">{{username[0].upper() if username else 'U'}}</span>
+        </div>
+        <div class="user-details">
+          <span class="username" id="username-display">{{username or 'User'}}</span>
+        </div>
+      </div>
+      <a href="/logout" class="logout-btn">
+        <i class="fas fa-sign-out-alt"></i>
+        Logout
+      </a>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="content">
+      <section class="welcome-card">
+        <div class="welcome-content">
+          <div class="welcome-text">
+            <h2>Welcome back, <span id="welcome-username">{{username or 'User'}}</span>!</h2>
+            <p>Transform your CMS scores with AI-powered insights and predictions</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-container">
+        <div class="tab-header">
+          <button class="tab-btn active" data-tab="current">
+            <i class="fas fa-chart-pie"></i>
+            Current Analysis
+          </button>
+          <button class="tab-btn" data-tab="prediction">
+            <i class="fas fa-crystal-ball"></i>
+            Star Predictions
+          </button>
+        </div>
+
+        <div class="tab-content" id="current-tab">
+          <div class="upload-area" id="current-upload">
+            <div class="upload-icon">
+              <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            <div class="upload-text">Upload your CMS data</div>
+            <div class="upload-subtext">Drag and drop your CSV or Excel file here, or click to browse</div>
+            <input type="file" id="currentFile" class="file-input" accept=".csv,.xlsx,.xls" style="display: none;">
+            <button type="button" class="upload-btn" onclick="document.getElementById('currentFile').click()">
+              Choose File
+            </button>
+            <div class="file-info" id="currentFileInfo" style="margin-top: 16px; font-size: 14px; color: var(--muted-foreground);"></div>
+            <button type="button" class="upload-btn" id="analyzeCurrentBtn" style="margin-top: 16px; display: none;">
+              Analyze Current State
+            </button>
+          </div>
+
+          <div class="loading" id="currentLoading">
+            <div class="spinner"></div>
+            <p>Analyzing your current CMS performance...</p>
+          </div>
+
+          <div class="results" id="currentResults">
+            <h3 style="margin-bottom: 20px; color: var(--dark);">Current Analysis Results</h3>
+            <div id="currentResultsContent"></div>
+            <button type="button" class="upload-btn" id="analyzeAnotherCurrentBtn" style="margin-top: 20px;">
+              Analyze Another File
+            </button>
+          </div>
+        </div>
+
+        <div class="tab-content" id="prediction-tab" style="display: none;">
+          <div class="upload-area" id="prediction-upload">
+            <div class="upload-icon">
+              <i class="fas fa-magic"></i>
+            </div>
+            <div class="upload-text">Predict future performance</div>
+            <div class="upload-subtext">Upload your data to get AI-powered predictions</div>
+            <input type="file" id="predictionFile" class="file-input" accept=".csv,.xlsx,.xls" style="display: none;">
+            <button type="button" class="upload-btn" onclick="document.getElementById('predictionFile').click()">
+              Choose File
+            </button>
+            <div class="file-info" id="predictionFileInfo" style="margin-top: 16px; font-size: 14px; color: var(--muted-foreground);"></div>
+            <button type="button" class="upload-btn" id="predictBtn" style="margin-top: 16px; display: none;">
+              Generate Predictions
+            </button>
+          </div>
+
+          <div class="loading" id="predictionLoading">
+            <div class="spinner"></div>
+            <p>Generating future predictions...</p>
+          </div>
+
+          <div class="results" id="predictionResults">
+            <h3 style="margin-bottom: 20px; color: var(--dark);">Prediction Results</h3>
+            <div id="predictionResultsContent"></div>
+            <button type="button" class="upload-btn" id="predictAnotherBtn" style="margin-top: 20px;">
+              Predict Another File
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<div class="message-modal" id="messageModal">
+  <div class="message-content">
+    <p id="messageText"></p>
+    <button class="message-close" onclick="closeMessage()">OK</button>
+  </div>
+</div>
+
+<script>
+  function showMessage(message) {
+    document.getElementById('messageText').textContent = message;
+    document.getElementById('messageModal').classList.add('show');
+  }
+
+  function closeMessage() {
+    document.getElementById('messageModal').classList.remove('show');
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Theme-loading logic
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+    
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetTab = btn.dataset.tab;
+        
+        tabBtns.forEach(b => b.classList.remove('active'));
+        tabContents.forEach(content => content.style.display = 'none');
+        
+        btn.classList.add('active');
+        document.getElementById(targetTab + '-tab').style.display = 'block';
+      });
+    });
+
+    const currentFile = document.getElementById('currentFile');
+    const currentFileInfo = document.getElementById('currentFileInfo');
+    const analyzeCurrentBtn = document.getElementById('analyzeCurrentBtn');
+    const currentUpload = document.getElementById('current-upload');
+    const currentLoading = document.getElementById('currentLoading');
+    const currentResults = document.getElementById('currentResults');
+    const currentResultsContent = document.getElementById('currentResultsContent');
+    const analyzeAnotherCurrentBtn = document.getElementById('analyzeAnotherCurrentBtn');
+
+    const predictionFile = document.getElementById('predictionFile');
+    const predictionFileInfo = document.getElementById('predictionFileInfo');
+    const predictBtn = document.getElementById('predictBtn');
+    const predictionUpload = document.getElementById('prediction-upload');
+    const predictionLoading = document.getElementById('predictionLoading');
+    const predictionResults = document.getElementById('predictionResults');
+    const predictionResultsContent = document.getElementById('predictionResultsContent');
+    const predictAnotherBtn = document.getElementById('predictAnotherBtn');
+
+    function handleFileChange(fileInput, fileInfo, processBtn) {
+      fileInput.addEventListener('change', function() {
+        if (this.files.length > 0) {
+          const file = this.files[0];
+          fileInfo.textContent = `Selected: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+          processBtn.style.display = 'inline-block';
+        } else {
+          fileInfo.textContent = '';
+          processBtn.style.display = 'none';
+        }
+      });
+    }
+
+    function handleAnalyzeClick(processBtn, fileInput, uploadArea, loadingArea, resultsArea, apiEndpoint, displayFunction) {
+      processBtn.addEventListener('click', () => {
+        if (!fileInput.files.length) {
+          showMessage('Please select a file first.');
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+
+        uploadArea.style.display = 'none';
+        loadingArea.classList.add('show');
+
+        fetch(apiEndpoint, {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          loadingArea.classList.remove('show');
+          
+          if (data.error) {
+            showMessage('Error: ' + data.error);
+            uploadArea.style.display = 'block';
+          } else {
+            displayFunction(data);
+            resultsArea.classList.add('show');
+          }
+        })
+        .catch(error => {
+          loadingArea.classList.remove('show');
+          showMessage('Error: ' + error.message);
+          uploadArea.style.display = 'block';
+        });
+      });
+    }
+
+    function generateStarRating(rating) {
+      const maxStars = 5;
+      const fullStars = Math.floor(rating);
+      const hasHalfStar = rating - fullStars >= 0.25 && rating - fullStars < 0.75;
+      const emptyStars = maxStars - (fullStars + (hasHalfStar ? 1 : 0));
+
+      let starsHtml = '<div class="star-rating">';
+
+      for (let i = 0; i < fullStars; i++) {
+        starsHtml += '<i class="fas fa-star star filled"></i>';
+      }
+
+      if (hasHalfStar) {
+        starsHtml += '<i class="fas fa-star-half-alt star half-filled"></i>';
+      }
+
+      for (let i = 0; i < emptyStars; i++) {
+        starsHtml += '<i class="far fa-star star"></i>';
+      }
+
+      starsHtml += '</div>';
+      return starsHtml;
+    }
+    
+function displayCurrentResults(data) {
+    currentResultsContent.innerHTML = '';
+    
+    if (!data || !data.data || !Array.isArray(data.data) || data.data.length === 0) {
+      currentResultsContent.innerHTML = `
+        <div class="result-item">
+          <div class="result-title">No analysis results available</div>
+          <div class="result-meta">
+            <span>Error: Invalid or empty data received</span>
+          </div>
+        </div>
+      `;
+      return;
+    }
+    
+    const stars = data.data.map(item => parseFloat(item.predicted_star)).filter(star => !isNaN(star));
+    const avgStar = stars.length > 0 ? (stars.reduce((a, b) => a + b, 0) / stars.length).toFixed(2) : 'N/A';
+    
+    // Create summary result item
+    const summaryItem = document.createElement('div');
+    summaryItem.className = 'result-item';
+    
+    summaryItem.innerHTML = `
+      <div class="result-title">Current State Analysis Summary</div>
+      <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 8px;">
+        <div style="font-weight: 600;">Average Rating:</div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          ${generateStarRating(parseFloat(avgStar))}
+          <span>${avgStar} stars</span>
+        </div>
+      </div>
+      <div class="result-meta">
+        <span class="${getPriorityClass(avgStar)}">Level: ${getRatingLevel(avgStar)}</span>
+        <span>Features Analyzed: ${data.data.length}</span>
+        <span>Rows Processed: ${data.data_shape ? data.data_shape[0] : 'N/A'}</span>
+      </div>
+      ${data.message ? `<div style="margin-top: 8px; font-size: 12px; color: #059669;">${data.message}</div>` : ''}
+    `;
+    
+    currentResultsContent.appendChild(summaryItem);
+    
+    // Create detailed results section
+    const detailsHeader = document.createElement('h4');
+    detailsHeader.textContent = 'Detailed Results';
+    detailsHeader.style.margin = '24px 0 16px 0';
+    detailsHeader.style.color = 'var(--dark)';
+    detailsHeader.style.fontSize = '18px';
+    currentResultsContent.appendChild(detailsHeader);
+    
+    // Create table for detailed results
+    const tableContainer = document.createElement('div');
+    tableContainer.style.overflowX = 'auto';
+    tableContainer.style.marginBottom = '20px';
+    
+    const table = document.createElement('table');
+    table.style.width = '100%';
+    table.style.borderCollapse = 'collapse';
+    table.style.borderRadius = 'var(--radius-md)';
+    table.style.overflow = 'hidden';
+    table.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.05)';
+    
+    // Create table header
+    if (data.data.length > 0) {
+      const headerRow = document.createElement('tr');
+      headerRow.style.backgroundColor = 'var(--brand-10)';
+      
+      // Define the desired column order
+      const columnOrder = ['feature', 'predicted_star', 'average_percentage'];
+      
+      // Add headers in the specified order
+      columnOrder.forEach(key => {
+        if (data.data[0].hasOwnProperty(key)) {
+          const th = document.createElement('th');
+          th.textContent = key.replace(/_/g, ' ').toUpperCase();
+          th.style.padding = '12px 16px';
+          th.style.textAlign = 'left';
+          th.style.fontWeight = '600';
+          th.style.borderBottom = '1px solid var(--border)';
+          headerRow.appendChild(th);
+        }
+      });
+      
+      // Add remaining columns (if any) after the specified ones
+      Object.keys(data.data[0]).forEach(key => {
+        if (!columnOrder.includes(key)) {
+          const th = document.createElement('th');
+          th.textContent = key.replace(/_/g, ' ').toUpperCase();
+          th.style.padding = '12px 16px';
+          th.style.textAlign = 'left';
+          th.style.fontWeight = '600';
+          th.style.borderBottom = '1px solid var(--border)';
+          headerRow.appendChild(th);
+        }
+      });
+      
+      table.appendChild(headerRow);
+      
+      // Add data rows
+      data.data.forEach(item => {
+        const row = document.createElement('tr');
+        row.style.backgroundColor = 'rgba(255, 255, 255, 0.6)';
+        row.style.borderBottom = '1px solid var(--border)';
+        
+        // Add cells in the specified order first
+        columnOrder.forEach(key => {
+          if (item.hasOwnProperty(key)) {
+            const td = document.createElement('td');
+            td.style.padding = '12px 16px';
+            td.style.borderBottom = '1px solid var(--border)';
+            
+            if (key === 'predicted_star') {
+              // Special handling for star rating column
+              const starValue = parseFloat(item[key]);
+              if (!isNaN(starValue)) {
+                td.innerHTML = `
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="display: flex; align-items: center;">
+                      ${generateStarRating(starValue)}
+                    </div>
+                    <span style="font-weight: 500; color: var(--dark);">${starValue.toFixed(1)}</span>
+                  </div>
+                `;
+              } else {
+                td.textContent = item[key];
+              }
+            } else {
+              td.textContent = item[key];
+            }
+            
+            row.appendChild(td);
+          }
+        });
+        
+        // Add remaining cells (if any) after the specified ones
+        Object.entries(item).forEach(([key, value]) => {
+          if (!columnOrder.includes(key)) {
+            const td = document.createElement('td');
+            td.textContent = value;
+            td.style.padding = '12px 16px';
+            td.style.borderBottom = '1px solid var(--border)';
+            row.appendChild(td);
+          }
+        });
+        
+        table.appendChild(row);
+      });
+    }
+    
+    tableContainer.appendChild(table);
+    currentResultsContent.appendChild(tableContainer);
+  }
+    function displayPredictionResults(data) {
+      predictionResultsContent.innerHTML = '';
+     
+      const resultItem = document.createElement('div');
+      resultItem.className = 'result-item';
+      
+      const predictedStars = parseFloat(data.predictions ? JSON.parse(data.predictions)[0].predicted_star_rating : data.data);
+      const starRatingHtml = generateStarRating(predictedStars);
+     
+      resultItem.innerHTML = `
+        <div class="result-title">Future Prediction Result</div>
+        <div style="display: flex; align-items: center; gap: 16px; margin: 16px 0;">
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              ${starRatingHtml}
+              <span style="font-size: 18px; font-weight: 600; color: var(--primary);">${predictedStars} / 5.0</span>
+            </div>
+            <div style="font-size: 14px; color: var(--muted-foreground);">Predicted CMS Star Rating</div>
+          </div>
+        </div>
+        <div class="result-meta">
+          <span class="${getPriorityClass(predictedStars)}">Rating Level: ${getRatingLevel(predictedStars)}</span>
+          <span>Rows: ${data.data_shape ? data.data_shape[0] : 'N/A'}</span>
+        </div>
+        ${data.message ? `<div style="margin-top: 8px; font-size: 12px; color: #059669;">${data.message}</div>` : ''}
+      `;
+     
+      predictionResultsContent.appendChild(resultItem);
+    }
+
+    function getRatingLevel(rating) {
+      rating = parseFloat(rating);
+      if (rating >= 4.5) return 'Excellent';
+      if (rating >= 4.0) return 'Very Good';
+      if (rating >= 3.5) return 'Good';
+      if (rating >= 3.0) return 'Average';
+      if (rating >= 2.0) return 'Below Average';
+      return 'Poor';
+    }
+
+    function getPriorityClass(star) {
+      star = parseFloat(star);
+      if (star <= 2) return 'priority-high';
+      if (star <= 3) return 'priority-medium';
+      return 'priority-low';
+    }
+
+    function resetAnalysis(fileInput, fileInfo, loadingArea, resultsArea, uploadArea, processBtn) {
+      fileInput.value = '';
+      fileInfo.textContent = '';
+      loadingArea.classList.remove('show');
+      resultsArea.classList.remove('show');
+      uploadArea.style.display = 'block';
+      processBtn.style.display = 'none';
+    }
+
+    handleFileChange(currentFile, currentFileInfo, analyzeCurrentBtn);
+    handleAnalyzeClick(analyzeCurrentBtn, currentFile, currentUpload, currentLoading, currentResults, '/analyze-current', displayCurrentResults);
+    analyzeAnotherCurrentBtn.addEventListener('click', () => {
+      resetAnalysis(currentFile, currentFileInfo, currentLoading, currentResults, currentUpload, analyzeCurrentBtn);
+    });
+
+    handleFileChange(predictionFile, predictionFileInfo, predictBtn);
+    handleAnalyzeClick(predictBtn, predictionFile, predictionUpload, predictionLoading, predictionResults, '/predict', displayPredictionResults);
+    predictAnotherBtn.addEventListener('click', () => {
+      resetAnalysis(predictionFile, predictionFileInfo, predictionLoading, predictionResults, predictionUpload, predictBtn);
+    });
+
+    const currentPath = window.location.pathname;
+    document.querySelectorAll('.nav-item').forEach(item => {
+      if (item.getAttribute('href') === currentPath) {
+        item.classList.add('active');
+      } else {
+        item.classList.remove('active');
+      }
+    });
+  });
+</script>
+</body>
+</html>

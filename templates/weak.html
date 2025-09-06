@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CMS • Weak Areas</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    :root {
+      --primary: #2596be;
+      --secondary: #1e7a9b;
+      --accent: #ffb74d;
+      --dark: #1a1a2e;
+      --light: #ffffff;
+      --cream: #fef7f0;
+      --gray: #686d76;
+      --light-gray: #f5f5f5;
+      
+      --background: #ffffff;
+      --foreground: var(--dark);
+      --card: #f8fafc;
+      --card-foreground: var(--dark);
+      --primary-foreground: var(--light);
+      --muted: #f8fafc;
+      --muted-foreground: var(--gray);
+      --border: #e5e7eb;
+
+      --glass-light: rgba(255, 255, 255, 0.25);
+      --glass-border: rgba(255, 255, 255, 0.2);
+      --glass-shadow: rgba(31, 38, 135, 0.37);
+      
+      --brand: var(--primary);
+      --bg: var(--background);
+      --text: var(--foreground);
+
+      --brand-10: rgba(37, 150, 190, 0.08);
+      --brand-15: rgba(37, 150, 190, 0.15);
+      --brand-20: rgba(37, 150, 190, 0.2);
+      --text-08: rgba(26, 26, 46, 0.08);
+      --text-12: rgba(26, 26, 46, 0.12);
+
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 10px;
+
+      --shadow-sm: 0 1px 2px var(--text-08);
+      --shadow-md: 0 6px 20px var(--text-08);
+      --shadow-lg: 0 12px 36px var(--text-12);
+      --focus-ring: 0 0 0 3px var(--brand-15);
+    }
+    
+    [data-theme="dark"] {
+      --background: #0f172a;
+      --foreground: #f8fafc;
+      --card: #1e293b;
+      --card-foreground: #f8fafc;
+      --primary-foreground: #f8fafc;
+      --muted: #1e293b;
+      --muted-foreground: #94a3b8;
+      --border: #334155;
+      
+      --glass-light: rgba(30, 41, 59, 0.5);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-shadow: rgba(2, 6, 23, 0.5);
+      
+      --brand-10: rgba(37, 150, 190, 0.15);
+      --brand-15: rgba(37, 150, 190, 0.25);
+      --brand-20: rgba(37, 150, 190, 0.3);
+      --text-08: rgba(248, 250, 252, 0.08);
+      --text-12: rgba(248, 250, 252, 0.12);
+    }
+
+    * { 
+      box-sizing: border-box; 
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text);
+      background: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%);
+      background-attachment: fixed;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    
+    [data-theme="dark"] body {
+      background: linear-gradient(135deg, #0c4a6e 0%, #1e3a8a 100%);
+    }
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .app::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(37, 150, 190, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    [data-theme="dark"] .app::before {
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(37, 150, 190, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(15, 23, 42, 0.3) 0%, transparent 50%);
+    }
+
+        .logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 4px 15px rgba(37, 150, 190, 0.3);
+    }
+
+    .logo img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    /* Top Navigation */
+    .topbar {
+      height: 70px;
+      background: var(--glass-light);
+      border-bottom: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-md);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 0.5px;
+      color: var(--dark);
+    }
+
+    .logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: grid;
+      place-items: center;
+      box-shadow: 0 4px 15px rgba(37, 150, 190, 0.3);
+    }
+
+    .logo svg {
+      width: 16px;
+      height: 16px;
+      fill: white;
+    }
+
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 auto;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 12px;
+      color: var(--text);
+      font-weight: 500;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: var(--glass-border);
+      transform: translateY(-1px);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--light);
+      box-shadow: 0 6px 20px rgba(37, 150, 190, 0.3);
+    }
+
+    .nav-item svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid var(--glass-border);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--primary));
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .user-details {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .username {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .role {
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    .logout-btn {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+    }
+
+    /* Main Content */
+    .main {
+      flex: 1;
+      padding: 32px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - 70px);
+    }
+
+    /* File Upload Styles */
+    .file-upload-container {
+      position: relative;
+      margin-bottom: 24px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .file-upload-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 16px 32px;
+      background: var(--glass-light);
+      color: var(--text);
+      border: 2px dashed var(--glass-border);
+      border-radius: var(--radius-lg);
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-sm);
+      text-align: center;
+      backdrop-filter: blur(10px);
+      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    }
+
+    .file-upload-label:hover {
+      border-color: var(--brand);
+      background: var(--brand-10);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(37, 150, 190, 0.15);
+    }
+
+    .file-upload-label:active {
+      transform: translateY(0);
+    }
+
+    .file-upload-label:focus-within {
+      border-color: var(--brand);
+      box-shadow: var(--focus-ring);
+    }
+
+    .file-upload-label svg {
+      width: 20px;
+      height: 20px;
+      color: var(--brand);
+    }
+
+    .file-upload-input {
+      display: none !important;
+    }
+
+    .file-name {
+      margin-top: 12px;
+      font-size: 14px;
+      color: var(--text);
+      text-align: center;
+      opacity: 0.8;
+      max-width: 400px;
+      word-break: break-word;
+      transition: all 0.3s ease;
+    }
+
+    .file-upload-label.drag-over {
+      background: var(--brand-20);
+      border-color: var(--brand);
+      transform: scale(1.02);
+    }
+
+    /* Success state when file is selected */
+    .file-upload-label.has-file {
+      border-color: #10B981;
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .file-upload-label.has-file svg {
+      color: #10B981;
+    }
+
+    .file-upload-label.has-file .upload-text {
+      color: #10B981;
+    }
+
+    .file-name.has-file {
+      color: #10B981;
+      font-weight: 600;
+      opacity: 1;
+    }
+
+    /* File upload success notification */
+    .upload-success {
+      position: fixed;
+      top: 90px;
+      right: 20px;
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: white;
+      padding: 16px 20px;
+      border-radius: var(--radius-md);
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transform: translateX(400px);
+      opacity: 0;
+      transition: all 0.4s ease;
+      z-index: 1001;
+      font-weight: 600;
+    }
+
+    .upload-success.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .upload-success svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    /* Button and Output Styles */
+    .main-button {
+      padding: 16px 32px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(37, 150, 190, 0.3);
+      transition: all 0.3s ease;
+      outline: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .main-button:hover {
+      background: linear-gradient(135deg, var(--secondary), var(--primary));
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(30, 122, 155, 0.4);
+    }
+
+    .main-button:active {
+      transform: translateY(0);
+    }
+
+    .main-button:focus-visible {
+      box-shadow: var(--focus-ring);
+    }
+
+    .main-button svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Output Display */
+    .output-container {
+      background: var(--glass-light);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      padding: 32px;
+      max-width: 800px;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.4s ease;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      position: relative;
+    }
+
+    .output-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .output-container.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .output-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .output-content {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text);
+      white-space: pre-wrap;
+      backdrop-filter: blur(10px);
+      max-height: 400px;
+      overflow-y: auto;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .output-content strong {
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .output-content h3 {
+      margin-top: 15px;
+      margin-bottom: 8px;
+      color: var(--secondary);
+      font-size: 16px;
+    }
+
+    .output-content ul {
+      padding-left: 20px;
+      margin-bottom: 15px;
+    }
+
+    .output-content li {
+      margin-bottom: 8px;
+    }
+
+    /* Loading animation */
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading {
+      animation: spin 1s linear infinite;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .nav-menu {
+        display: none;
+      }
+
+      .topbar {
+        padding: 0 16px;
+      }
+
+      .main {
+        padding: 16px;
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+      .upload-success {
+        right: 10px;
+        left: 10px;
+        transform: translateY(-100px);
+      }
+
+      .upload-success.show {
+        transform: translateY(0);
+      }
+      
+      .user-info {
+        padding: 6px 12px;
+      }
+      
+      .user-details {
+        display: none;
+      }
+      
+      .logout-btn {
+        padding: 8px 12px;
+        font-size: 0;
+      }
+      
+      .logout-btn::before {
+        content: '\f2f5';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: 14px;
+      }
+      
+      .output-content {
+        max-height: 300px;
+        font-size: 13px;
+        padding: 15px;
+      }
+    }
+
+    /* Motion preferences */
+    @media (prefers-reduced-motion: reduce) {
+      * { 
+        transition-duration: 0.01ms !important; 
+        animation-duration: 0.01ms !important; 
+        animation-iteration-count: 1 !important; 
+      }
+    }
+    
+    /* Message Modal */
+    .message-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+
+    .message-modal.show {
+      display: flex;
+    }
+
+    .message-content {
+      background: var(--glass-light);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      padding: 32px;
+      border-radius: var(--radius-lg);
+      max-width: 400px;
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .message-content p {
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+    
+    .message-close {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    /* Floating animation elements */
+    .floating-icon { 
+      position: absolute; 
+      color: rgba(255,255,255,0.2); 
+      animation: float 6s ease-in-out infinite; 
+      pointer-events: none; 
+      z-index: 0;
+    }
+    .floating-icon.icon-1 { top: 15%; right: 10%; font-size: 2rem; animation-delay: 0s; }
+    .floating-icon.icon-2 { bottom: 20%; left: 8%; font-size: 1.5rem; animation-delay: 2s; }
+    .floating-icon.icon-3 { top: 60%; right: 15%; font-size: 1.2rem; animation-delay: 4s; }
+    @keyframes float { 0%,100%{ transform: translateY(0px);} 50%{ transform: translateY(-15px);} }
+
+    @media (max-width: 959px) {
+      .floating-icon { display: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <i class="fas fa-chart-line floating-icon icon-1"></i>
+  <i class="fas fa-star floating-icon icon-2"></i>
+  <i class="fas fa-lightbulb floating-icon icon-3"></i>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Brand Logo" />
+      </div>
+      <span>INSU-SYNC</span>
+    </div>
+
+    <nav class="nav-menu">
+    <a href="/dashboard" class="nav-item">
+      <i class="fas fa-home"></i>
+      <span>Home</span>
+    </a>
+    <a href="/weak" class="nav-item">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>Weak Areas</span>
+    </a>
+    <a href="/simulator" class="nav-item">
+      <i class="fas fa-calculator"></i>
+      <span>Simulator</span>
+    </a>
+    <a href="/reports" class="nav-item">
+      <i class="fas fa-chart-bar"></i>
+      <span>Reports</span>
+    </a>
+    <a href="/settings" class="nav-item">
+      <i class="fas fa-cog"></i>
+      <span>Settings</span>
+    </a>
+  </nav>
+
+    <div class="top-right">
+      <div class="user-info">
+        <div class="avatar">
+          <span id="username-avatar">{{username[0].upper() if username else 'U'}}</span>
+        </div>
+        <div class="user-details">
+          <span class="username" id="username-display">{{username or 'User'}}</span>
+        </div>
+      </div>
+      <a href="/logout" class="logout-btn">
+        <i class="fas fa-sign-out-alt"></i>
+        Logout
+      </a>
+    </div>
+  </header>
+  
+  <div class="upload-success" id="uploadSuccess">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 11l3 3L22 4"/>
+      <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+    </svg>
+    <span>File uploaded successfully!</span>
+  </div>
+
+  <main class="main">
+    <div class="content">
+      <div class="file-upload-container">
+        <label for="fileInput" class="file-upload-label" id="fileUploadLabel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          <span class="upload-text">Choose CSV or Excel File</span>
+        </label>
+        <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" class="file-upload-input">
+        <div class="file-name" id="fileName">No file chosen</div>
+      </div>
+
+      <button class="main-button" id="showOutputBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="16"/>
+          <line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+        Show Performance Analysis
+      </button>
+
+      <div class="output-container" id="outputContainer">
+        <div class="output-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          Performance Analysis Report
+        </div>
+        <div class="output-content" id="outputContent">
+          Loading performance data...
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="message-modal" id="messageModal">
+  <div class="message-content">
+    <p id="messageText"></p>
+    <button class="message-close" onclick="closeMessage()">OK</button>
+  </div>
+</div>
+
+<script>
+  let outputVisible = false;
+
+  function showMessage(message) {
+    document.getElementById('messageText').textContent = message;
+    document.getElementById('messageModal').classList.add('show');
+  }
+
+  function closeMessage() {
+    document.getElementById('messageModal').classList.remove('show');
+  }
+
+  function showUploadSuccess() {
+    const notification = document.getElementById('uploadSuccess');
+    notification.classList.add('show');
+    
+    // Auto hide after 3 seconds
+    setTimeout(() => {
+      notification.classList.remove('show');
+    }, 3000);
+  }
+
+  function resetButton() {
+    const button = document.getElementById('showOutputBtn');
+    button.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="16"/>
+        <line x1="8" y1="12" x2="16" y2="12"/>
+      </svg>
+      Show Performance Analysis
+    `;
+    outputVisible = false;
+  }
+
+  function formatApiResponse(data) {
+    // Format the output with HTML
+    let report = `<strong>Future Prediction Score:</strong> ${data.future_prediction}<br><br>
+                  <strong>Weak Features:</strong><br>${data.weak_features.join(', ')}<br><br>
+                  <strong>Strategies:</strong><br>`;
+
+    // Process the strategies to convert **text** to <strong>text</strong>
+    let formattedStrategies = data.strategies
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Convert **text** to <strong>text</strong>
+      .replace(/\n/g, '<br>') // Convert line breaks to HTML breaks
+      .replace(/Feature: (.*?)<br>/g, '<h3>$1</h3>') // Format feature headings
+      .replace(/\* (.*?)<br>/g, '<li>$1</li>') // Convert list items
+      .replace(/<li>(.*?)<\/li>/g, '<ul><li>$1</li></ul>') // Wrap lists
+      .replace(/<\/ul><ul>/g, ''); // Clean up nested ul tags
+
+    report += formattedStrategies;
+    
+    return report;
+  }
+
+  document.getElementById('showOutputBtn').addEventListener('click', function() {
+    const button = this;
+    const container = document.getElementById('outputContainer');
+    const content = document.getElementById('outputContent');
+    const fileInput = document.getElementById('fileInput');
+
+    if (!outputVisible) {
+      if (!fileInput.files.length) {
+        showMessage('Please select a file to analyze.');
+        return;
+      }
+
+      container.classList.add('show');
+      button.innerHTML = `
+        <svg class="loading" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="16"/>
+            <line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+        Generating Report...
+      `;
+
+      let formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+
+      fetch('/weak_analysis', { method: 'POST', body: formData })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          content.textContent = 'Error: ' + data.error;
+          showMessage('Error: ' + data.error);
+          container.classList.remove('show');
+          resetButton();
+          return;
+        }
+
+        // Format the API response
+        const formattedReport = formatApiResponse(data);
+        
+        // Use innerHTML instead of textContent to render the HTML
+        content.innerHTML = formattedReport;
+
+        button.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+          Hide Analysis
+        `;
+
+        outputVisible = true;
+      })
+      .catch(error => {
+        content.textContent = 'Fetch error: ' + error;
+        showMessage('Request failed: ' + error);
+        container.classList.remove('show');
+        resetButton();
+      });
+    } else {
+      container.classList.remove('show');
+      resetButton();
+      content.textContent = '';
+    }
+  });
+
+  function initializeFileUpload() {
+    const fileInput = document.getElementById('fileInput');
+    const fileUploadLabel = document.getElementById('fileUploadLabel');
+    const fileName = document.getElementById('fileName');
+    const uploadText = fileUploadLabel.querySelector('.upload-text');
+
+    fileInput.addEventListener('change', function(e) {
+      if (this.files.length > 0) {
+        const file = this.files[0];
+        const fileSize = (file.size / 1024 / 1024).toFixed(2); // Size in MB
+        
+        fileName.textContent = `${file.name} (${fileSize} MB)`;
+        fileName.classList.add('has-file');
+        fileUploadLabel.classList.add('has-file');
+        
+        // Change upload text to indicate success
+        uploadText.textContent = 'File Selected ✓';
+        
+        // Show success notification
+        showUploadSuccess();
+        
+        // Reset the output if it's visible
+        if (outputVisible) {
+          document.getElementById('outputContainer').classList.remove('show');
+          resetButton();
+          document.getElementById('outputContent').textContent = '';
+        }
+      } else {
+        fileName.textContent = 'No file chosen';
+        fileName.classList.remove('has-file');
+        fileUploadLabel.classList.remove('has-file');
+        uploadText.textContent = 'Choose CSV or Excel File';
+      }
+    });
+
+    // Drag and drop functionality
+    fileUploadLabel.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      this.classList.add('drag-over');
+    });
+
+    fileUploadLabel.addEventListener('dragleave', function(e) {
+      e.preventDefault();
+      this.classList.remove('drag-over');
+    });
+
+    fileUploadLabel.addEventListener('drop', function(e) {
+      e.preventDefault();
+      this.classList.remove('drag-over');
+      
+      if (e.dataTransfer.files.length) {
+        fileInput.files = e.dataTransfer.files;
+        const event = new Event('change');
+        fileInput.dispatchEvent(event);
+      }
+    });
+
+    // Click anywhere on the label to trigger file input
+    fileUploadLabel.addEventListener('click', function(e) {
+      if (e.target !== fileInput) {
+        fileInput.click();
+      }
+    });
+  }
+
+  function initializeNavigation() {
+    // Set active nav item based on current page
+    const currentPath = window.location.pathname;
+    const navItems = document.querySelectorAll('.nav-item');
+    
+    navItems.forEach(item => {
+      item.classList.remove('active');
+      if (item.getAttribute('href') === currentPath) {
+        item.classList.add('active');
+      }
+    });
+    
+    // If no exact match, set weak areas as active since this is the weak areas page
+    if (currentPath.includes('weak') || currentPath === '/weak') {
+      document.querySelector('a[href="/weak"]').classList.add('active');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // Theme-loading logic
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+    
+    console.log('DOM Content Loaded - initializing once');
+    initializeNavigation();
+    initializeFileUpload();
+  });
+</script>
+</body>
+</html>

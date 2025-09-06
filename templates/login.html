@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Predictive Analytics – Sign In</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    :root {
+      --primary: #2596be;
+      --secondary: #1e7a9b;
+      --accent: #ffb74d;
+      --dark: #1a1a2e;
+      --light: #ffffff;
+      --cream: #fef7f0;
+      --gray: #686d76;
+      --light-gray: #f5f5f5;
+      
+      --background: #ffffff;
+      --foreground: var(--dark);
+      --card: #f8fafc;
+      --card-foreground: var(--dark);
+      --primary-foreground: var(--light);
+      --muted: #f8fafc;
+      --muted-foreground: var(--gray);
+      --border: #e5e7eb;
+
+      --glass-light: rgba(255, 255, 255, 0.25);
+      --glass-border: rgba(255, 255, 255, 0.2);
+      --glass-shadow: rgba(31, 38, 135, 0.37);
+      
+      --brand: var(--primary);
+      --bg: var(--background);
+      --text: var(--foreground);
+
+      --brand-10: rgba(37, 150, 190, 0.08);
+      --brand-15: rgba(37, 150, 190, 0.15);
+      --brand-20: rgba(37, 150, 190, 0.2);
+      --text-08: rgba(26, 26, 46, 0.08);
+      --text-12: rgba(26, 26, 46, 0.12);
+
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 10px;
+      --container: 1200px;
+
+      --shadow-sm: 0 1px 2px var(--text-08);
+      --shadow-md: 0 6px 20px var(--text-08);
+      --shadow-lg: 0 12px 36px var(--text-12);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text);
+      line-height: 1.6;
+      background: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%);
+      background-attachment: fixed;
+    }
+    .shell { min-height: 100dvh; display: grid; grid-template-columns: 1fr; }
+    @media (min-width:960px) { .shell { grid-template-columns: 1fr 1fr; } }
+    .hero {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--primary-foreground);
+      display: flex; align-items: center; justify-content: center;
+      padding: 32px 20px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border-right: 1px solid var(--glass-border); position: relative; overflow: hidden;
+    }
+    [data-theme="dark"] {
+      --background: #0f172a;
+      --foreground: #f8fafc;
+      --card: #1e293b;
+      --card-foreground: #f8fafc;
+      --primary-foreground: #f8fafc;
+      --muted: #1e293b;
+      --muted-foreground: #94a3b8;
+      --border: #334155;
+      
+      --glass-light: rgba(30, 41, 59, 0.5);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-shadow: rgba(2, 6, 23, 0.5);
+      
+      --brand-10: rgba(37, 150, 190, 0.15);
+      --brand-15: rgba(37, 150, 190, 0.25);
+      --brand-20: rgba(37, 150, 190, 0.3);
+      --text-08: rgba(248, 250, 252, 0.08);
+      --text-12: rgba(248, 250, 252, 0.12);
+    }
+    .hero::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(circle at 20% 80%, rgba(37, 150, 190, 0.1) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .hero-inner { max-width: 560px; position: relative; z-index: 1; }
+    .h1 { margin: 16px 0 12px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; font-size: 32px; }
+    @media (min-width:960px) { .h1 { font-size: 40px; } }
+    .lead { color: rgba(255,255,255,0.9); margin: 0 0 16px; font-size: 20px; font-weight: 500; }
+    .points { list-style: none; padding: 0; margin: 0 0 16px; display: grid; gap: 12px; }
+    .points li { display: grid; grid-template-columns: 24px 1fr; gap: 12px; align-items: start; font-size: 16px; color: rgba(255,255,255,0.9); }
+    .points li::before { content: "★"; color: #fff; line-height: 1; margin-top: 2px; font-weight: 900; font-size: 18px; }
+    .auth { display: flex; align-items: center; justify-content: center; padding: 32px 20px; position: relative; }
+    .auth::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(circle at 70% 20%, rgba(37, 150, 190, 0.1) 0%, transparent 50%),
+                  radial-gradient(circle at 20% 80%, rgba(30, 122, 155, 0.08) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .card {
+      width: 100%; max-width: 440px; background: var(--glass-light); border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg); padding: 32px; box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); position: relative; z-index: 1;
+    }
+    .card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+    .card h2 { margin: 0 0 4px; font-size: 28px; font-weight: 700; color: var(--dark); letter-spacing: -0.01em; }
+    .card p.sub { margin: 0 0 24px; font-size: 15px; color: var(--muted-foreground); }
+    .segmented { margin-bottom: 24px; position: relative; }
+    .segmented input { position: absolute; opacity: 0; pointer-events: none; }
+    .switch { position: relative; display: flex; gap: 4px; background: var(--brand-10); padding: 4px; border-radius: 12px; border: 1px solid var(--brand-20); }
+    .switch .opt { flex: 1; text-align: center; font-size: 14px; padding: 12px 16px; border-radius: 8px; color: var(--muted-foreground); user-select: none; cursor: pointer; position: relative; z-index: 1; transition: all .2s ease; font-weight: 500; }
+    .switch .pill {
+      position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px);
+      border-radius: 8px; background: linear-gradient(135deg, var(--primary), var(--secondary));
+      box-shadow: 0 4px 15px rgba(37, 150, 190, 0.3); transition: transform .25s ease;
+    }
+    #s-in:checked ~ .switch .opt.one { color: var(--light); font-weight: 600; }
+    #s-up:checked ~ .switch .opt.two { color: var(--light); font-weight: 600; }
+    #s-up:checked ~ .switch .pill { transform: translateX(100%); background: linear-gradient(135deg, var(--secondary), var(--primary)); }
+    #s-in:checked ~ .switch .pill { transform: translateX(0%); }
+    .forms>form { display: none; }
+    #s-in:checked ~ .forms #form-signin { display: block; }
+    #s-up:checked ~ .forms #form-signup { display: block; }
+    .field { margin-bottom: 20px; }
+    .label { display: block; font-size: 14px; color: var(--dark); margin: 0 0 8px; font-weight: 600; }
+    input[type="text"], input[type="email"], input[type="password"], select {
+      display: block !important; width: 100% !important; min-height: 48px !important; padding: 14px 16px !important;
+      border-radius: var(--radius-sm) !important; border: 1.5px solid rgba(255,255,255,0.3) !important;
+      background: rgba(255,255,255,0.8) !important; color: var(--dark) !important; outline: none !important;
+      box-shadow: none !important; appearance: none !important; font-family: inherit; font-size: 15px; transition: all .2s ease;
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    }
+    select {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23686d76' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e") !important;
+      background-position: right 1rem center !important; background-repeat: no-repeat !important; background-size: 1.5em 1.5em !important; padding-right: 3rem !important;
+    }
+    input::placeholder { color: var(--muted-foreground); opacity: 0.8; }
+    input:focus, select:focus { border-color: var(--primary) !important; box-shadow: 0 0 0 3px var(--brand-15) !important; background: rgba(255,255,255,0.95) !important; }
+    .btn {
+      width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 15px;
+      border: none; border-radius: var(--radius-sm); padding: 15px 20px; cursor: pointer; color: var(--primary-foreground);
+      background: linear-gradient(135deg, var(--primary), var(--secondary)); box-shadow: 0 6px 20px rgba(37, 150, 190, 0.3); transition: all .2s ease; font-family: inherit;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(30, 122, 155, 0.4); }
+    .btn:active { transform: translateY(0px); }
+    .forgot-password { display: block; text-align: right; margin: -8px 0 20px; font-size: 13px; color: var(--primary); text-decoration: none; font-weight: 500; }
+    .forgot-password:hover { text-decoration: underline; color: var(--secondary); }
+    .muted { font-size: 14px; color: var(--muted-foreground); text-align: center; margin-top: 24px; }
+    .muted a { color: var(--primary); text-decoration: none; font-weight: 600; cursor: pointer; }
+    .muted a:hover { text-decoration: underline; color: var(--secondary); }
+    .otp-form { display: none; margin-top: 16px; }
+    .otp-form.active { display: block; }
+    .otp-form input { width: 100%; margin-bottom: 12px; }
+    .password-actions { display: flex; justify-content: space-between; align-items: center; margin: 8px 0 20px; }
+    
+    /* Role selection styles */
+    .role-selection {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    
+    .role-option {
+      flex: 1;
+      text-align: center;
+      padding: 12px;
+      border: 1.5px solid rgba(255,255,255,0.3);
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.8);
+      cursor: pointer;
+      transition: all .2s ease;
+    }
+    
+    .role-option.selected {
+      border-color: var(--primary);
+      background: var(--brand-10);
+      box-shadow: 0 0 0 3px var(--brand-15);
+    }
+    
+    .role-option input {
+      display: none;
+    }
+
+    /* Floating animation elements */
+    .floating-icon { position: absolute; color: rgba(255,255,255,0.2); animation: float 6s ease-in-out infinite; pointer-events: none; }
+    .floating-icon.icon-1 { top: 15%; right: 10%; font-size: 2rem; animation-delay: 0s; }
+    .floating-icon.icon-2 { bottom: 20%; left: 8%; font-size: 1.5rem; animation-delay: 2s; }
+    .floating-icon.icon-3 { top: 60%; right: 15%; font-size: 1.2rem; animation-delay: 4s; }
+    @keyframes float { 0%,100%{ transform: translateY(0px);} 50%{ transform: translateY(-15px);} }
+
+    @media (max-width: 959px) {
+      .floating-icon { display: none; }
+      .hero { border-right: none; border-bottom: 1px solid var(--glass-border); }
+    }
+
+    /* Focus styles */
+    .btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+    /* Flash messages */
+    .flash-messages { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+    .flash-message { padding: 12px 20px; margin-bottom: 10px; border-radius: var(--radius-sm); color: white; font-weight: 500; box-shadow: var(--shadow-md); animation: slideIn 0.3s ease; }
+    .flash-success { background: linear-gradient(135deg, #28a745, #218838); }
+    .flash-error { background: linear-gradient(135deg, #dc3545, #c82333); }
+    .flash-info { background: linear-gradient(135deg, #17a2b8, #138496); }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    /* Hidden state for forms */
+    .hidden { display: none !important; }
+   .otp-form {
+      display: none;
+      margin-top: 16px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--glass-border);
+    }
+    
+    .otp-form.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .otp-input {
+      letter-spacing: 8px;
+      font-size: 18px;
+      font-weight: 600;
+      text-align: center;
+    }
+    /* Password requirements tooltip */
+    .password-tooltip {
+      font-size: 12px;
+      color: #6c757d;
+      margin-top: -10px;
+      margin-bottom: 15px;
+      padding: 8px;
+      background: var(--light-gray);
+      border-radius: 6px;
+      border-left: 3px solid var(--primary);
+    }
+    .password-tooltip ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+    .password-tooltip ul li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .password-tooltip ul li i {
+      color: #dc3545;
+    }
+    .password-tooltip ul li.valid i {
+      color: #28a745;
+    }
+  </style>
+</head>
+<body>
+  <div class="flash-messages" id="flash-messages"></div>
+
+  <div class="shell">
+    <aside class="hero">
+      <div class="hero-inner">
+        <h1 class="h1">Predict & boost your star ratings</h1>
+        <p class="lead">Forecast ratings, identify improvement opportunities, and get actionable recommendations.</p>
+        <ul class="points">
+          <li>Measure-level forecasts with confidence intervals</li>
+          <li>Targeted interventions prioritized by ROI</li>
+          <li>Cost-aware optimization to sustain performance</li>
+        </ul>
+      </div>
+      
+      <i class="fas fa-chart-line floating-icon icon-1"></i>
+      <i class="fas fa-star floating-icon icon-2"></i>
+      <i class="fas fa-lightbulb floating-icon icon-3"></i>
+    </aside>
+    
+    <main class="auth">
+      <div class="card">
+        <h2 id="auth-title">Welcome</h2>
+        <p class="sub" id="auth-subtitle">Sign in to your account</p>
+        <div class="segmented" id="segmented-control">
+          <input type="radio" id="s-in" name="auth-type" checked>
+          <input type="radio" id="s-up" name="auth-type">
+          <div class="switch">
+            <label for="s-in" class="opt one">Sign In</label>
+            <label for="s-up" class="opt two">Sign Up</label>
+            <span class="pill"></span>
+          </div>
+        </div>
+        <div class="forms">
+          <form id="form-signin" method="POST" action="/signin">
+              <div class="field">
+                  <label class="label" for="signin-user">Username</label>
+                  <input type="text" id="signin-user" name="username" placeholder="Enter username" required />
+              </div>
+              <div class="field">
+                  <label class="label" for="signin-pass">Password</label>
+                  <input type="password" id="signin-pass" name="password" placeholder="Enter password" required />
+              </div>
+              
+              <div class="field">
+                <label class="label">Role</label>
+                <div class="role-selection">
+                  <label class="role-option" id="user-role">
+                    <input type="radio" name="role" value="user" checked>
+                    <span>User</span>
+                  </label>
+                  <label class="role-option" id="executive-role">
+                    <input type="radio" name="role" value="executive">
+                    <span>Executive</span>
+                  </label>
+                </div>
+              </div>
+              
+              <div class="password-actions">
+                <a href="#" class="forgot-password" id="forgot-password">Forgot Password?</a>
+              </div>
+              <button class="btn" type="submit">Sign In</button>
+              <p class="muted">Don't have an account? <a href="#" id="switch-to-signup">Sign up</a></p>
+          </form>
+
+          <form id="form-signup" method="POST" action="/signup">
+            <div class="field">
+              <label class="label" for="signup-user">Username</label>
+              <input type="text" id="signup-user" name="signup-user" placeholder="Choose a username" required />
+            </div>
+            <div class="field">
+              <label class="label" for="signup-email">Email</label>
+              <input type="email" id="signup-email" name="signup-email" placeholder="you@company.com" required />
+            </div>
+            <div class="field">
+              <label class="label" for="signup-pass">Password</label>
+              <input type="password" id="signup-pass" name="signup-pass" placeholder="Create a strong password" required />
+            </div>
+            <div class="password-tooltip" id="signup-password-tooltip">
+              <ul>
+                <li><i class="fas fa-check-circle"></i> At least 8 characters</li>
+                <li><i class="fas fa-check-circle"></i> At least one uppercase letter</li>
+                <li><i class="fas fa-check-circle"></i> At least one lowercase letter</li>
+                <li><i class="fas fa-check-circle"></i> At least one number</li>
+                <li><i class="fas fa-check-circle"></i> At least one special character</li>
+              </ul>
+            </div>
+            <div class="field">
+              <label class="label" for="signup-confirm">Confirm Password</label>
+              <input type="password" id="signup-confirm" name="signup-confirm" placeholder="Re-enter password" required />
+            </div>
+            
+            <div class="field">
+              <label class="label">Role</label>
+              <div class="role-selection">
+                <label class="role-option" id="signup-user-role">
+                  <input type="radio" name="signup-role" value="user" checked>
+                  <span>User</span>
+                </label>
+                <label class="role-option" id="signup-executive-role">
+                  <input type="radio" name="signup-role" value="executive">
+                  <span>Executive</span>
+                </label>
+              </div>
+            </div>
+            
+            <button class="btn" type="submit">Create Account</button>
+            <p class="muted">Already have an account? <a href="#" id="switch-to-signin">Sign in</a></p>
+          </form>
+
+          <form id="otp-form" class="otp-form" method="POST" action="/verify-signup-otp">
+            <div class="field">
+              <label class="label" for="otp">Enter OTP</label>
+              <input type="text" id="otp" name="otp" placeholder="Enter 6-digit OTP" required class="otp-input" maxlength="6" pattern="[0-9]{6}" />
+            </div>
+            <button class="btn" type="submit">Verify OTP</button>
+            <p class="muted">Didn't receive OTP? <a href="#" id="resend-otp">Resend</a></p>
+          </form>
+
+          <form id="forgot-password-form" class="otp-form" method="POST" action="/forgot-password">
+            <div class="field">
+              <label class="label" for="forgot-email">Email Address</label>
+              <input type="email" id="forgot-email" name="forgot-email" placeholder="Enter your email address" required />
+            </div>
+            
+            <div class="field">
+              <label class="label">Role</label>
+              <div class="role-selection">
+                <label class="role-option" id="forgot-user-role">
+                  <input type="radio" name="forgot-role" value="user" checked>
+                  <span>User</span>
+                </label>
+                <label class="role-option" id="forgot-executive-role">
+                  <input type="radio" name="forgot-role" value="executive">
+                  <span>Executive</span>
+                </label>
+              </div>
+            </div>
+            
+            <button class="btn" type="submit">Reset Password</button>
+            <p class="muted">Remember your password? <a href="#" id="back-to-signin">Sign in</a></p>
+          </form>
+
+          <form id="forgot-otp-form" class="otp-form" method="POST" action="/reset-password" onsubmit="return validateResetPassword()">
+            <div class="field">
+              <label class="label" for="forgot-otp">Enter OTP</label>
+              <input type="text" id="forgot-otp" name="otp" placeholder="Enter 6-digit OTP" required class="otp-input" maxlength="6" pattern="[0-9]{6}" />
+            </div>
+            <div class="field">
+              <label class="label" for="new-password">New Password</label>
+              <input type="password" id="new-password" name="new-password" placeholder="Enter new password" required />
+            </div>
+            <div class="password-tooltip" id="reset-password-tooltip">
+              <ul>
+                <li><i class="fas fa-check-circle"></i> At least 8 characters</li>
+                <li><i class="fas fa-check-circle"></i> At least one uppercase letter</li>
+                <li><i class="fas fa-check-circle"></i> At least one lowercase letter</li>
+                <li><i class="fas fa-check-circle"></i> At least one number</li>
+                <li><i class="fas fa-check-circle"></i> At least one special character</li>
+              </ul>
+            </div>
+            <div class="field">
+              <label class="label" for="confirm-password">Confirm Password</label>
+              <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm new password" required />
+            </div>
+            <button class="btn" type="submit">Reset Password</button>
+            <p class="muted">Didn't receive OTP? <a href="#" id="resend-forgot-otp">Resend</a></p>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const signInRadio = document.getElementById('s-in');
+      const signUpRadio = document.getElementById('s-up');
+      const signInForm = document.getElementById('form-signin');
+      const signUpForm = document.getElementById('form-signup');
+      const otpForm = document.getElementById('otp-form');
+      const forgotPasswordForm = document.getElementById('forgot-password-form');
+      const forgotOtpForm = document.getElementById('forgot-otp-form');
+      const authTitle = document.getElementById('auth-title');
+      const authSubtitle = document.getElementById('auth-subtitle');
+      const switchToSignup = document.getElementById('switch-to-signup');
+      const switchToSignin = document.getElementById('switch-to-signin');
+      const resendOtp = document.getElementById('resend-otp');
+      const resendForgotOtp = document.getElementById('resend-forgot-otp');
+      const forgotPasswordLink = document.getElementById('forgot-password');
+      const backToSignin = document.getElementById('back-to-signin');
+      const segmentedControl = document.getElementById('segmented-control');
+
+      // Function to handle role selection
+      function setupRoleSelection() {
+        // Signin form role selection
+        const signinRoleOptions = document.querySelectorAll('#form-signin .role-option');
+        signinRoleOptions.forEach(option => {
+          option.addEventListener('click', function() {
+            signinRoleOptions.forEach(opt => opt.classList.remove('selected'));
+            this.classList.add('selected');
+            this.querySelector('input').checked = true;
+          });
+        });
+        
+        // Signup form role selection
+        const signupRoleOptions = document.querySelectorAll('#form-signup .role-option');
+        signupRoleOptions.forEach(option => {
+          option.addEventListener('click', function() {
+            signupRoleOptions.forEach(opt => opt.classList.remove('selected'));
+            this.classList.add('selected');
+            this.querySelector('input').checked = true;
+          });
+        });
+        
+        // Forgot password form role selection
+        const forgotRoleOptions = document.querySelectorAll('#forgot-password-form .role-option');
+        forgotRoleOptions.forEach(option => {
+          option.addEventListener('click', function() {
+            forgotRoleOptions.forEach(opt => opt.classList.remove('selected'));
+            this.classList.add('selected');
+            this.querySelector('input').checked = true;
+          });
+        });
+        
+        // Initialize with default selections
+        document.getElementById('user-role').classList.add('selected');
+        document.getElementById('signup-user-role').classList.add('selected');
+        document.getElementById('forgot-user-role').classList.add('selected');
+      }
+
+      // Function to hide all forms completely
+      function hideAllForms() {
+        const forms = [signInForm, signUpForm, otpForm, forgotPasswordForm, forgotOtpForm];
+        forms.forEach(form => {
+          form.style.display = 'none';
+          form.classList.remove('active');
+        });
+      }
+
+      // Function to show a specific form
+      function showForm(form) {
+        hideAllForms();
+        form.style.display = 'block';
+        form.classList.add('active');
+      }
+
+      function updateFormVisibility() {
+        if (signInRadio.checked) {
+          showForm(signInForm);
+          authTitle.textContent = 'Welcome back';
+          authSubtitle.textContent = 'Sign in to your account';
+        } else {
+          showForm(signUpForm);
+          authTitle.textContent = 'Create account';
+          authSubtitle.textContent = 'Get started with Predictive Analytics';
+        }
+        segmentedControl.style.display = 'block';
+      }
+
+      // Function to show signup OTP form
+      function showSignupOtpForm() {
+        showForm(otpForm);
+        segmentedControl.style.display = 'none';
+        authTitle.textContent = 'Verify Your Account';
+        authSubtitle.textContent = 'Enter OTP sent to your email';
+      }
+
+      // Function to show forgot password OTP form
+      function showForgotOtpForm() {
+        showForm(forgotOtpForm);
+        segmentedControl.style.display = 'none';
+        authTitle.textContent = 'Reset Your Password';
+        authSubtitle.textContent = 'Enter OTP and set new password';
+      }
+
+      // Function to show forgot password email form
+      function showForgotPasswordForm() {
+        showForm(forgotPasswordForm);
+        segmentedControl.style.display = 'none';
+        authTitle.textContent = 'Reset Password';
+        authSubtitle.textContent = 'Enter your email to reset your password';
+      }
+
+      // Enhanced function to check URL parameters and show appropriate form
+      function checkUrlParams() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const showOtp = urlParams.get('show_otp');
+        const otpType = urlParams.get('otp_type');
+        const message = urlParams.get('message');
+        const messageType = urlParams.get('type');
+        const mode = urlParams.get('mode');
+        
+        console.log('URL params:', { showOtp, otpType, message, messageType, mode });
+        
+        // Show flash message if present in URL
+        if (message && messageType) {
+          showFlashMessage(decodeURIComponent(message), messageType);
+        }
+        
+        // Show appropriate form based on URL parameters
+        if (showOtp === 'true') {
+          if (otpType === 'signup') {
+            console.log('Showing signup OTP form');
+            showSignupOtpForm();
+            return; // Exit early to prevent other form logic
+          } else if (otpType === 'forgot') {
+            console.log('Showing forgot OTP form');
+            showForgotOtpForm();
+            return; // Exit early to prevent other form logic
+          }
+        }
+        
+        // Handle initial mode (signup/signin)
+        if (mode === 'signup') {
+          signUpRadio.checked = true;
+          signInRadio.checked = false;
+        } else {
+          signInRadio.checked = true;
+          signUpRadio.checked = false;
+        }
+        
+        updateFormVisibility();
+      }
+
+      // Event listeners for form switching
+      signInRadio.addEventListener('change', updateFormVisibility);
+      signUpRadio.addEventListener('change', updateFormVisibility);
+      
+      switchToSignup.addEventListener('click', function(e) { 
+        e.preventDefault(); 
+        signUpRadio.checked = true; 
+        signInRadio.checked = false;
+        updateFormVisibility(); 
+      });
+      
+      switchToSignin.addEventListener('click', function(e) { 
+        e.preventDefault(); 
+        signInRadio.checked = true; 
+        signUpRadio.checked = false;
+        updateFormVisibility(); 
+      });
+
+      // Forgot password link
+      forgotPasswordLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        showForgotPasswordForm();
+      });
+
+      // Back to signin from forgot password
+      backToSignin.addEventListener('click', function(e) {
+        e.preventDefault();
+        signInRadio.checked = true;
+        signUpRadio.checked = false;
+        updateFormVisibility();
+      });
+
+      // Resend sign-up OTP functionality
+      resendOtp.addEventListener('click', function(e) {
+        e.preventDefault();
+        fetch('/resend-otp?type=signup', {
+          method: 'GET' // Changed to GET as per app.py route
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data && data.success) {
+            showFlashMessage('OTP has been resent to your email.', 'info');
+          } else {
+            showFlashMessage((data && data.message) || 'Error resending OTP. Please try again.', 'error');
+          }
+        })
+        .catch(() => {
+          showFlashMessage('Error resending OTP. Please try again.', 'error');
+        });
+      });
+
+      // Resend forgot-password OTP functionality
+      resendForgotOtp.addEventListener('click', function(e) {
+        e.preventDefault();
+        fetch('/resend-otp?type=forgot', {
+          method: 'GET' // Changed to GET as per app.py route
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data && data.success) {
+            showFlashMessage('OTP has been resent to your email.', 'info');
+          } else {
+            showFlashMessage((data && data.message) || 'Error resending OTP. Please try again.', 'error');
+          }
+        })
+        .catch(() => {
+          showFlashMessage('Error resending OTP. Please try again.', 'error');
+        });
+      });
+
+      // Function to show flash messages
+      function showFlashMessage(message, type) {
+        const flashContainer = document.getElementById('flash-messages');
+        const flashMessage = document.createElement('div');
+        flashMessage.className = `flash-message flash-${type}`;
+        flashMessage.textContent = message;
+        
+        flashContainer.appendChild(flashMessage);
+        
+        // Remove message after 5 seconds
+        setTimeout(() => {
+          flashMessage.style.opacity = '0';
+          flashMessage.style.transition = 'opacity 0.5s ease';
+          setTimeout(() => {
+            if (flashContainer.contains(flashMessage)) {
+              flashContainer.removeChild(flashMessage);
+            }
+          }, 500);
+        }, 5000);
+      }
+
+      // Initialize the page
+      setupRoleSelection();
+      checkUrlParams();
+      
+      // Add OTP input validation
+      const otpInputs = document.querySelectorAll('.otp-input');
+      otpInputs.forEach(input => {
+        input.addEventListener('input', function() {
+          this.value = this.value.replace(/\D/g, '');
+          if (this.value.length > 6) {
+            this.value = this.value.slice(0, 6);
+          }
+        });
+        
+        input.addEventListener('keydown', function(e) {
+          // Allow only numbers and navigation keys
+          if (!/^\d$/.test(e.key) && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key)) {
+            e.preventDefault();
+          }
+        });
+      });
+
+      // Password validation logic
+      const signupPassword = document.getElementById('signup-pass');
+      const signupConfirm = document.getElementById('signup-confirm');
+      const signupForm = document.getElementById('form-signup');
+      const signupPasswordTooltip = document.getElementById('signup-password-tooltip');
+
+      const newPassword = document.getElementById('new-password');
+      const confirmPassword = document.getElementById('confirm-password');
+      const forgotOtpFormElement = document.getElementById('forgot-otp-form');
+      const resetPasswordTooltip = document.getElementById('reset-password-tooltip');
+
+      function validatePassword(password, tooltipId) {
+        const passwordValue = password.value;
+        const tooltip = document.getElementById(tooltipId);
+        const criteria = {
+          length: passwordValue.length >= 8,
+          uppercase: /[A-Z]/.test(passwordValue),
+          lowercase: /[a-z]/.test(passwordValue),
+          number: /[0-9]/.test(passwordValue),
+          special: /[!@#$%^&*(),.?":{}|<>]/.test(passwordValue)
+        };
+        
+        // Update tooltip icons
+        const listItems = tooltip.querySelectorAll('li');
+        listItems[0].classList.toggle('valid', criteria.length);
+        listItems[1].classList.toggle('valid', criteria.uppercase);
+        listItems[2].classList.toggle('valid', criteria.lowercase);
+        listItems[3].classList.toggle('valid', criteria.number);
+        listItems[4].classList.toggle('valid', criteria.special);
+
+        return Object.values(criteria).every(c => c);
+      }
+      
+      signupPassword.addEventListener('input', () => validatePassword(signupPassword, 'signup-password-tooltip'));
+      newPassword.addEventListener('input', () => validatePassword(newPassword, 'reset-password-tooltip'));
+
+      // Add a submit event listener to the signup form
+      signupForm.addEventListener('submit', function(e) {
+        if (!validatePassword(signupPassword, 'signup-password-tooltip')) {
+          e.preventDefault();
+          showFlashMessage('Please ensure your password meets all requirements.', 'error');
+        } else if (signupPassword.value !== signupConfirm.value) {
+          e.preventDefault();
+          showFlashMessage('Passwords do not match.', 'error');
+        }
+      });
+      
+      // Add a submit event listener to the forgot password form
+      forgotOtpFormElement.addEventListener('submit', function(e) {
+        if (!validatePassword(newPassword, 'reset-password-tooltip')) {
+          e.preventDefault();
+          showFlashMessage('Please ensure your new password meets all requirements.', 'error');
+        } else if (newPassword.value !== confirmPassword.value) {
+          e.preventDefault();
+          showFlashMessage('Passwords do not match.', 'error');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

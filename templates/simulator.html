@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CMS • Star Rating Simulator</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    /* Updated theme to match the first code sample */
+    :root {
+      /* Color scheme to match login page */
+      --primary: #2596be;
+      --secondary: #1e7a9b;
+      --accent: #ffb74d;
+      --dark: #1a1a2e;
+      --light: #ffffff;
+      --cream: #fef7f0;
+      --gray: #686d76;
+      --light-gray: #f5f5f5;
+      
+      --background: #ffffff;
+      --foreground: var(--dark);
+      --card: #f8fafc;
+      --card-foreground: var(--dark);
+      --primary-foreground: var(--light);
+      --muted: #f8fafc;
+      --muted-foreground: var(--gray);
+      --border: #e5e7eb;
+
+      /* Glass effect variables */
+      --glass-light: rgba(255, 255, 255, 0.25);
+      --glass-border: rgba(255, 255, 255, 0.2);
+      --glass-shadow: rgba(31, 38, 135, 0.37);
+      
+      /* Updated brand colors */
+      --brand: var(--primary);
+      --bg: var(--background);
+      --text: var(--foreground);
+
+      /* Tints and shadows using blue color palette */
+      --brand-10: rgba(37, 150, 190, 0.08);
+      --brand-15: rgba(37, 150, 190, 0.15);
+      --brand-20: rgba(37, 150, 190, 0.2);
+      --text-08: rgba(26, 26, 46, 0.08);
+      --text-12: rgba(26, 26, 46, 0.12);
+
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 10px;
+
+      --shadow-sm: 0 1px 2px var(--text-08);
+      --shadow-md: 0 6px 20px var(--text-08);
+      --shadow-lg: 0 12px 36px var(--text-12);
+      --focus-ring: 0 0 0 3px var(--brand-15);
+    }
+    
+    [data-theme="dark"] {
+      --background: #0f172a;
+      --foreground: #f8fafc;
+      --card: #1e293b;
+      --card-foreground: #f8fafc;
+      --primary-foreground: #f8fafc;
+      --muted: #1e293b;
+      --muted-foreground: #94a3b8;
+      --border: #334155;
+      
+      --glass-light: rgba(30, 41, 59, 0.5);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-shadow: rgba(2, 6, 23, 0.5);
+      
+      --brand-10: rgba(37, 150, 190, 0.15);
+      --brand-15: rgba(37, 150, 190, 0.25);
+      --brand-20: rgba(37, 150, 190, 0.3);
+      --text-08: rgba(248, 250, 252, 0.08);
+      --text-12: rgba(248, 250, 252, 0.12);
+    }
+
+    * { 
+      box-sizing: border-box; 
+      margin: 0;
+      padding: 0;
+    }
+    .logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  display: grid;
+  place-items: center;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  overflow: hidden; /* This ensures the image doesn't overflow the circle */
+}
+
+.logo img {
+  width: 100%; /* Makes the image fill the container */
+  height: 100%; /* Makes the image fill the container */
+  object-fit: cover; /* Ensures the image maintains aspect ratio while filling container */
+}
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text);
+      background: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%);
+      background-attachment: fixed;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    
+    [data-theme="dark"] body {
+      background: linear-gradient(135deg, #0c4a6e 0%, #1e3a8a 100%);
+    }
+
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .app::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(37, 150, 190, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    [data-theme="dark"] .app::before {
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(37, 150, 190, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(15, 23, 42, 0.3) 0%, transparent 50%);
+    }
+
+    /* Top Navigation */
+    .topbar {
+      height: 70px;
+      background: var(--glass-light);
+      border-bottom: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-md);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 0.5px;
+      color: var(--dark);
+    }
+
+    .logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: grid;
+      place-items: center;
+      box-shadow: 0 4px 15px rgba(37, 150, 190, 0.3);
+    }
+
+    .logo svg {
+      width: 16px;
+      height: 16px;
+      fill: white;
+    }
+
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 auto;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 12px;
+      color: var(--text);
+      font-weight: 500;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: var(--glass-border);
+      transform: translateY(-1px);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--light);
+      box-shadow: 0 6px 20px rgba(37, 150, 190, 0.3);
+    }
+
+    .nav-item svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid var(--glass-border);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--primary));
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .user-details {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .username {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .role {
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    .logout-btn {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+    }
+
+    /* Main Content */
+    .main {
+      flex: 1;
+      padding: 32px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Star Rating Simulator Styles */
+    .simulator-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .simulator-header {
+      margin-bottom: 32px;
+    }
+
+    .simulator-header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .simulator-header p {
+      color: var(--gray);
+      font-size: 16px;
+      max-width: 800px;
+    }
+
+    /* Calculator Section - can be hidden */
+    .calculator-section {
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .calculator-section.hidden {
+      display: none;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 960px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-section {
+      background: var(--glass-light);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(20px);
+      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-section h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .form-group input[type="number"],
+    .form-group select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      background: var(--glass-light);
+      color: var(--text);
+      font-size: 14px;
+      backdrop-filter: blur(10px);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .form-group input[type="range"] {
+      width: 100%;
+      margin-top: 8px;
+      background: transparent;
+    }
+
+    .range-value {
+      display: inline-block;
+      min-width: 36px;
+      text-align: right;
+      font-weight: 600;
+    }
+
+    .help-text {
+      font-size: 12px;
+      color: var(--gray);
+      margin-top: 6px;
+    }
+
+    .calculate-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 16px 24px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 6px 20px rgba(37, 150, 190, 0.3);
+      margin-bottom: 32px;
+    }
+
+    .calculate-btn:hover {
+      background: linear-gradient(135deg, var(--secondary), #196f90);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(37, 150, 190, 0.4);
+    }
+
+    .calculate-btn:active {
+      transform: translateY(0);
+    }
+
+    .info-section {
+      background: var(--glass-light);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(20px);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .info-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      color: var(--primary);
+      cursor: pointer;
+      margin-bottom: 12px;
+    }
+
+    .info-content {
+      display: none;
+      padding-top: 12px;
+      border-top: 1px solid var(--glass-border);
+    }
+
+    .info-content.show {
+      display: block;
+    }
+
+    .info-content ul {
+      margin: 12px 0;
+      padding-left: 20px;
+    }
+
+    .info-content li {
+      margin-bottom: 8px;
+    }
+
+    /* Back to Calculator Button */
+    .back-btn {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: auto;
+      padding: 12px 20px;
+      background: linear-gradient(135deg, var(--gray), #5a5f68);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 15px rgba(104, 109, 118, 0.3);
+      margin-bottom: 24px;
+    }
+
+    .back-btn.show {
+      display: flex;
+    }
+
+    .back-btn:hover {
+      background: linear-gradient(135deg, #5a5f68, #4a4f56);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(104, 109, 118, 0.4);
+    }
+
+    /* Results section */
+    .results-section {
+      display: none;
+      background: var(--glass-light);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 32px;
+      backdrop-filter: blur(20px);
+      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .results-section.show {
+      display: block;
+    }
+
+    .results-section h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .result-card {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .result-card h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray);
+      margin-bottom: 12px;
+    }
+
+    .result-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .financial-results {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .insights {
+      background: rgba(232, 244, 252, 0.5);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-top: 24px;
+      border: 1px solid var(--glass-border);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .insights h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .insight {
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+
+    .insight.success {
+      background: rgba(209, 250, 229, 0.6);
+      color: #065F46;
+    }
+
+    .insight.info {
+      background: rgba(219, 234, 254, 0.6);
+      color: #1E40AF;
+    }
+
+    .insight.warning {
+      background: rgba(254, 243, 199, 0.6);
+      color: #92400E;
+    }
+
+    /* Motion preferences */
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .topbar {
+        padding: 0 16px;
+      }
+
+      .main {
+        padding: 16px;
+      }
+
+      .content {
+        padding: 20px;
+      }
+      
+      .results-grid, .financial-results {
+        grid-template-columns: 1fr;
+      }
+      
+      .nav-menu {
+        display: none;
+      }
+    }
+    
+    /* Message Modal */
+    .message-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+
+    .message-modal.show {
+      display: flex;
+    }
+
+    .message-content {
+      background: var(--glass-light);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      padding: 32px;
+      border-radius: var(--radius-lg);
+      max-width: 400px;
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .message-content p {
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+    
+    .message-close {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+  <div class="brand">
+    <div class="logo">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Brand Logo" />
+    </div>
+    <span>INSU-SYNC</span>
+  </div>
+
+  <nav class="nav-menu">
+    <a href="/dashboard" class="nav-item">
+      <i class="fas fa-home"></i>
+      <span>Home</span>
+    </a>
+    <a href="/weak" class="nav-item">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>Weak Areas</span>
+    </a>
+    <a href="/simulator" class="nav-item active">
+      <i class="fas fa-calculator"></i>
+      <span>Simulator</span>
+    </a>
+    <a href="/reports" class="nav-item">
+      <i class="fas fa-chart-bar"></i>
+      <span>Reports</span>
+    </a>
+    <a href="/settings" class="nav-item">
+      <i class="fas fa-cog"></i>
+      <span>Settings</span>
+    </a>
+  </nav>
+
+  <div class="top-right">
+    <div class="user-info">
+      <div class="avatar">
+        <span id="username-avatar">{{username[0].upper() if username else 'U'}}</span>
+      </div>
+      <div class="user-details">
+        <span class="username" id="username-display">{{username or 'User'}}</span>
+      </div>
+    </div>
+    <a href="/logout" class="logout-btn">
+      <i class="fas fa-sign-out-alt"></i>
+      Logout
+    </a>
+  </div>
+</header>
+
+  <main class="main">
+    <div class="content">
+      <div class="simulator-container">
+        <div class="simulator-header">
+          <h1>Medicare Star Rating Impact Simulator</h1>
+          <p>This tool helps Medicare Advantage plans estimate the potential impact of different interventions on their Star Ratings and financial performance.</p>
+        </div>
+
+        <button class="back-btn" id="back-btn">
+          <i class="fas fa-arrow-left"></i>
+          Back to Calculator
+        </button>
+
+        <div class="calculator-section" id="calculator-section">
+          <div class="form-grid">
+            <div class="form-section">
+              <h2>Plan Information</h2>
+              <div class="form-group">
+                <label for="current_star_rating">Current Star Rating: <span class="range-value" id="current_star_rating_value">3.5</span></label>
+                <input type="range" id="current_star_rating" min="1" max="5" step="0.1" value="3.5">
+              </div>
+              
+              <div class="form-group">
+                <label for="member_count">Number of Medicare Members</label>
+                <input type="number" id="member_count" min="1" value="10000" step="1000">
+              </div>
+              
+              <div class="form-group">
+                <label for="cms_bonus_per_star">CMS Bonus per 0.1 Star Improvement per Member ($)</label>
+                <input type="number" id="cms_bonus_per_star" min="0" value="25" step="5">
+                <div class="help-text">CMS typically pays $25-35 per member per 0.1 star improvement</div>
+              </div>
+              
+              <div class="form-group">
+                <label for="market_competitiveness">Market Competitiveness (1-100): <span class="range-value" id="market_competitiveness_value">50</span></label>
+                <input type="range" id="market_competitiveness" min="1" max="100" value="50">
+                <div class="help-text">How competitive is your market? Higher competition often leads to faster Star Rating improvements</div>
+              </div>
+            </div>
+            
+            <div class="form-section">
+              <h2>Proposed Intervention</h2>
+              <div class="form-group">
+                <label for="feature_type">Feature Type</label>
+                <select id="feature_type">
+                  <option value="digital_engagement">Digital Engagement</option>
+                  <option value="care_coordination">Care Coordination</option>
+                  <option value="member_education">Member Education</option>
+                  <option value="provider_tools">Provider Tools</option>
+                </select>
+                <div class="help-text">Type of feature or capability being implemented</div>
+              </div>
+              
+              <div class="form-group">
+                <label for="action_type">Action Type</label>
+                <select id="action_type">
+                  <option value="preventive_care">Preventive Care</option>
+                  <option value="chronic">Chronic Condition Management</option>
+                  <option value="plan_administration">Plan Administration</option>
+                </select>
+                <div class="help-text">The category of care or administration being addressed</div>
+              </div>
+              
+              <div class="form-group">
+                <label for="quantity">Quantity (number of interventions)</label>
+                <input type="number" id="quantity" min="1" value="5000" step="1000">
+                <div class="help-text">Number of times this intervention will be delivered</div>
+              </div>
+              
+              <div class="form-group">
+                <label for="investment">Investment Required ($)</label>
+                <input type="number" id="investment" min="0" value="50000" step="10000">
+                <div class="help-text">Total investment required including technology, staff, and operational costs</div>
+              </div>
+              
+              <div class="form-group">
+                <label for="implementation_quality">Implementation Quality (1-100): <span class="range-value" id="implementation_quality_value">70</span></label>
+                <input type="range" id="implementation_quality" min="1" max="100" value="70">
+                <div class="help-text">How well do you expect to implement this? Quality affects outcomes</div>
+              </div>
+            </div>
+          </div>
+
+          <button class="calculate-btn" id="calculate-btn">
+            <i class="fas fa-calculator"></i>
+            Calculate Star Rating Impact
+          </button>
+
+          <div class="info-section">
+            <div class="info-toggle" id="info-toggle">
+              <i class="fas fa-info-circle"></i>
+              How This Model Works
+            </div>
+            <div class="info-content" id="info-content">
+              <p>This simulation is based on industry research about Medicare Star Ratings:</p>
+              <ul>
+                <li><strong>Impact Factors:</strong> Different features affect Star Rating measures differently. For example:
+                  <ul>
+                    <li>Digital engagement strongly affects CAHPS measures (triple-weighted)</li>
+                    <li>Care coordination significantly impacts chronic condition management</li>
+                    <li>Provider tools improve accuracy of provider directories</li>
+                  </ul>
+                </li>
+                <li><strong>Implementation Quality:</strong> Well-executed programs deliver better results</li>
+                <li><strong>Market Factors:</strong> Competitive markets often see faster improvements</li>
+                <li><strong>Financial Impact:</strong> Includes both CMS bonus payments and member retention benefits</li>
+                <li><strong>Diminishing Returns:</strong> Higher penetration rates have less marginal impact</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="results-section" id="results-section">
+          <h2>Star Rating Impact</h2>
+          <div class="results-grid">
+            <div class="result-card">
+              <h3>Potential Star Rating Improvement</h3>
+              <div class="result-value" id="potential-improvement">+0.0</div>
+            </div>
+            <div class="result-card">
+              <h3>Projected New Star Rating</h3>
+              <div class="result-value" id="new-rating">0.0</div>
+            </div>
+            <div class="result-card">
+              <h3>Implementation Quality Modifier</h3>
+              <div class="result-value" id="quality-modifier">0.0</div>
+            </div>
+            <div class="result-card">
+              <h3>Market Competitiveness Modifier</h3>
+              <div class="result-value" id="market-modifier">0.0</div>
+            </div>
+          </div>
+
+          <h2>Financial Results</h2>
+          <div class="financial-results">
+            <div class="result-card">
+              <h3>CMS Bonus Impact</h3>
+              <div class="result-value" id="cms-impact">$0</div>
+            </div>
+            <div class="result-card">
+              <h3>Retention Impact</h3>
+              <div class="result-value" id="retention-impact">$0</div>
+            </div>
+            <div class="result-card">
+              <h3>Total Financial Impact</h3>
+              <div class="result-value" id="total-impact">$0</div>
+            </div>
+            <div class="result-card">
+              <h3>ROI</h3>
+              <div class="result-value" id="roi">$0 (0%)</div>
+            </div>
+          </div>
+
+          <div class="insights">
+            <h3>Strategic Insights</h3>
+            <div id="insights-content"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="message-modal" id="messageModal">
+  <div class="message-content">
+    <p id="messageText"></p>
+    <button class="message-close" onclick="closeMessage()">OK</button>
+  </div>
+</div>
+
+<script>
+  // Message modal functions
+  function showMessage(message) {
+    document.getElementById('messageText').textContent = message;
+    document.getElementById('messageModal').classList.add('show');
+  }
+
+  function closeMessage() {
+    document.getElementById('messageModal').classList.remove('show');
+  }
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    // Theme-loading logic
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+
+    // Set active navigation
+    const currentPath = window.location.pathname;
+    document.querySelectorAll('.nav-item').forEach(item => {
+      if (item.getAttribute('href') === currentPath) {
+        item.classList.add('active');
+      } else {
+        item.classList.remove('active');
+      }
+    });
+
+    // DOM Elements
+    const calculateBtn = document.getElementById('calculate-btn');
+    const resultsSection = document.getElementById('results-section');
+    const calculatorSection = document.getElementById('calculator-section');
+    const backBtn = document.getElementById('back-btn');
+    const infoToggle = document.getElementById('info-toggle');
+    const infoContent = document.getElementById('info-content');
+    
+    // Range input value displays
+    const currentStarRating = document.getElementById('current_star_rating');
+    const currentStarRatingValue = document.getElementById('current_star_rating_value');
+    const marketCompetitiveness = document.getElementById('market_competitiveness');
+    const marketCompetitivenessValue = document.getElementById('market_competitiveness_value');
+    const implementationQuality = document.getElementById('implementation_quality');
+    const implementationQualityValue = document.getElementById('implementation_quality_value');
+    
+    // Update range input values
+    currentStarRating.addEventListener('input', () => {
+      currentStarRatingValue.textContent = currentStarRating.value;
+    });
+    
+    marketCompetitiveness.addEventListener('input', () => {
+      marketCompetitivenessValue.textContent = marketCompetitiveness.value;
+    });
+    
+    implementationQuality.addEventListener('input', () => {
+      implementationQualityValue.textContent = implementationQuality.value;
+    });
+    
+    // Toggle info section
+    infoToggle.addEventListener('click', () => {
+      infoContent.classList.toggle('show');
+    });
+
+    // Back to calculator button
+    backBtn.addEventListener('click', () => {
+      // Hide results and back button
+      resultsSection.classList.remove('show');
+      backBtn.classList.remove('show');
+      
+      // Show calculator section
+      calculatorSection.classList.remove('hidden');
+    });
+    
+    // Calculate button click handler
+    calculateBtn.addEventListener('click', () => {
+      // Get form values
+      const formData = {
+        feature_type: document.getElementById('feature_type').value,
+        investment: parseFloat(document.getElementById('investment').value),
+        action_type: document.getElementById('action_type').value,
+        quantity: parseInt(document.getElementById('quantity').value),
+        current_star_rating: parseFloat(document.getElementById('current_star_rating').value),
+        member_count: parseInt(document.getElementById('member_count').value),
+        cms_bonus_per_star: parseFloat(document.getElementById('cms_bonus_per_star').value),
+        implementation_quality: parseInt(document.getElementById('implementation_quality').value),
+        market_competitiveness: parseInt(document.getElementById('market_competitiveness').value)
+      };
+      
+      // Calculate results
+      const result = calculateStarRatingImpact(
+        formData.feature_type,
+        formData.investment,
+        formData.action_type,
+        formData.quantity,
+        formData.current_star_rating,
+        formData.member_count,
+        formData.cms_bonus_per_star,
+        formData.implementation_quality,
+        formData.market_competitiveness
+      );
+      
+      // Update results
+      document.getElementById('potential-improvement').textContent = `+${result.potential_improvement}`;
+      document.getElementById('new-rating').textContent = result.new_star_rating;
+      document.getElementById('quality-modifier').textContent = result.quality_modifier;
+      document.getElementById('market-modifier').textContent = result.market_modifier;
+      document.getElementById('cms-impact').textContent = `${formatNumber(result.cms_bonus_impact)}`;
+      document.getElementById('retention-impact').textContent = `${formatNumber(result.retention_impact)}`;
+      document.getElementById('total-impact').textContent = `${formatNumber(result.total_financial_impact)}`;
+      document.getElementById('roi').textContent = `${formatNumber(result.roi)} (${result.roi_percentage}%)`;
+      
+      // Generate insights
+      generateInsights(result, formData.implementation_quality, formData.quantity, formData.member_count);
+      
+      // Hide calculator section and show results
+      calculatorSection.classList.add('hidden');
+      resultsSection.classList.add('show');
+      backBtn.classList.add('show');
+      
+      // Scroll to top of results
+      resultsSection.scrollIntoView({ behavior: 'smooth' });
+    });
+    
+    // Format numbers with commas
+    function formatNumber(num) {
+      return num.toLocaleString('en-US', { maximumFractionDigits: 0 });
+    }
+    
+    // Generate insights based on results
+    function generateInsights(data, implementationQuality, quantity, memberCount) {
+      const insightsContent = document.getElementById('insights-content');
+      insightsContent.innerHTML = '';
+      
+      if (data.roi > 0) {
+        const successDiv = document.createElement('div');
+        successDiv.className = 'insight success';
+        successDiv.innerHTML = '<p>✅ This intervention shows positive ROI and could improve your star rating.</p>';
+        insightsContent.appendChild(successDiv);
+        
+        if (data.potential_improvement >= 0.4) {
+          const infoDiv = document.createElement('div');
+          infoDiv.className = 'insight info';
+          infoDiv.innerHTML = '<p>🌟 Significant star rating improvement possible - this could move you to a higher bonus tier!</p>';
+          insightsContent.appendChild(infoDiv);
+        } else if (data.potential_improvement >= 0.2) {
+          const infoDiv = document.createElement('div');
+          infoDiv.className = 'insight info';
+          infoDiv.innerHTML = '<p>📈 Moderate star rating improvement likely - could strengthen your market position.</p>';
+          insightsContent.appendChild(infoDiv);
+        }
+      } else {
+        const warningDiv = document.createElement('div');
+        warningDiv.className = 'insight warning';
+        warningDiv.innerHTML = '<p>⚠ This intervention may not provide positive ROI based on current estimates.</p>';
+        insightsContent.appendChild(warningDiv);
+        
+        if (implementationQuality < 70) {
+          const infoDiv = document.createElement('div');
+          infoDiv.className = 'insight info';
+          infoDiv.innerHTML = '<p>💡 Consider improving implementation quality to increase success probability.</p>';
+          insightsContent.appendChild(infoDiv);
+        }
+        
+        if (quantity / memberCount < 0.3) {
+          const infoDiv = document.createElement('div');
+          infoDiv.className = 'insight info';
+          infoDiv.innerHTML = '<p>📊 Increasing intervention quantity might improve results through better penetration.</p>';
+          insightsContent.appendChild(infoDiv);
+        }
+      }
+    }
+    
+    // Star rating impact calculation function
+    function calculateStarRatingImpact(feature_type, investment, action_type, quantity, 
+                                      current_star_rating, member_count, cms_bonus_per_star,
+                                      implementation_quality, market_competitiveness) {
+      // Define impact factors based on CMS Star Rating measures and industry research
+      const measure_impact_factors = {
+        'preventive_care': {
+          'digital_engagement': 0.35,
+          'care_coordination': 0.45,
+          'member_education': 0.30,
+          'provider_tools': 0.25
+        },
+        'chronic': {
+          'digital_engagement': 0.40,
+          'care_coordination': 0.60,
+          'member_education': 0.35,
+          'provider_tools': 0.50
+        },
+        'plan_administration': {
+          'digital_engagement': 0.55,
+          'care_coordination': 0.30,
+          'member_education': 0.45,
+          'provider_tools': 0.40
+        }
+      };
+      
+      // Implementation quality modifier (0.7-1.3 range)
+      const quality_modifier = 0.7 + (implementation_quality / 100) * 0.6;
+      
+      // Market competitiveness modifier
+      const market_modifier = 0.8 + (market_competitiveness / 100) * 0.4;
+      
+      // Get base impact factor
+      const base_impact = measure_impact_factors[action_type][feature_type];
+      
+      // Calculate penetration rate
+      const penetration_rate = Math.min(1.0, quantity / member_count);
+      
+      // Calculate potential star rating improvement
+      let potential_improvement = base_impact * Math.log(1 + penetration_rate * 10) * quality_modifier * market_modifier;
+      
+      // Cap maximum improvement
+      potential_improvement = Math.min(0.8, potential_improvement);
+      
+      // Calculate new star rating
+      const new_star_rating = Math.min(5.0, current_star_rating + potential_improvement);
+      
+      // Calculate financial impact
+      const rating_diff = new_star_rating - current_star_rating;
+      
+      // Base bonus impact
+      const base_bonus_impact = rating_diff * cms_bonus_per_star * member_count;
+      
+      // Retention impact
+      let retention_impact = 0;
+      if (rating_diff > 0) {
+        const churn_reduction = rating_diff * 10 * 0.01;
+        const avg_revenue_per_member = 12000;
+        retention_impact = churn_reduction * member_count * avg_revenue_per_member * 0.5;
+      }
+      
+      const total_financial_impact = base_bonus_impact + retention_impact;
+      
+      // Calculate ROI
+      const roi = total_financial_impact - investment;
+      const roi_percentage = (roi / investment) * 100;
+      
+      return {
+        potential_improvement: potential_improvement.toFixed(2),
+        new_star_rating: new_star_rating.toFixed(2),
+        cms_bonus_impact: base_bonus_impact,
+        retention_impact: retention_impact,
+        total_financial_impact: total_financial_impact,
+        roi: roi,
+        roi_percentage: roi_percentage.toFixed(2),
+        quality_modifier: quality_modifier.toFixed(2),
+        market_modifier: market_modifier.toFixed(2)
+      };
+    }
+  });
+</script>
+</body>
+</html>

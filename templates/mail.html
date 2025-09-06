@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Verification - INSU-SYNC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%);
+            color: #1a1a2e;
+            line-height: 1.6;
+            padding: 20px 0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .email-wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 12px 36px rgba(26, 26, 46, 0.12);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2596be, #1e7a9b);
+            padding: 40px 40px 30px;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .logo {
+            width: 70px;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(37, 150, 190, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .logo img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            color: white;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header p {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .content {
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+        
+        .greeting {
+            font-size: 18px;
+            color: #1a1a2e;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .message {
+            font-size: 16px;
+            color: #686d76;
+            margin-bottom: 30px;
+            line-height: 1.7;
+        }
+        
+        .otp-section {
+            text-align: center;
+            margin: 40px 0;
+            padding: 30px;
+            background: rgba(37, 150, 190, 0.08);
+            border: 1px solid rgba(37, 150, 190, 0.2);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .otp-label {
+            font-size: 14px;
+            color: #2596be;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .otp-code {
+            font-size: 36px;
+            font-weight: 800;
+            color: #1e7a9b;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            letter-spacing: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px 30px;
+            border: 2px solid #2596be;
+            border-radius: 12px;
+            display: inline-block;
+            margin: 10px 0;
+            box-shadow: 0 6px 20px rgba(37, 150, 190, 0.15);
+            backdrop-filter: blur(10px);
+        }
+        
+        .security-note {
+            background: rgba(37, 150, 190, 0.1);
+            border: 1px solid rgba(37, 150, 190, 0.2);
+            color: #2596be;
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            margin: 25px 0;
+            backdrop-filter: blur(10px);
+        }
+        
+        .security-note strong {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+        
+        .divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, #2596be, transparent);
+            margin: 40px 0;
+        }
+        
+        .footer {
+            background: rgba(254, 247, 240, 0.8);
+            padding: 30px 40px;
+            text-align: center;
+            border-top: 1px solid rgba(37, 150, 190, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .company-info {
+            margin-bottom: 20px;
+        }
+        
+        .company-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2596be;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        
+        .company-address {
+            font-size: 14px;
+            color: #686d76;
+            line-height: 1.5;
+        }
+        
+        .support-info {
+            font-size: 14px;
+            color: #686d76;
+            margin: 20px 0 10px;
+        }
+        
+        .support-info a {
+            color: #2596be;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .support-info a:hover {
+            text-decoration: underline;
+            color: #1e7a9b;
+        }
+        
+        .disclaimer {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 20px;
+            line-height: 1.4;
+        }
+        
+        .button {
+            display: inline-block;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #2596be, #1e7a9b);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            margin: 20px 0;
+            box-shadow: 0 6px 20px rgba(37, 150, 190, 0.3);
+            transition: all 0.2s ease;
+            letter-spacing: 0.5px;
+        }
+        
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(37, 150, 190, 0.4);
+            background: linear-gradient(135deg, #1e7a9b, #2596be);
+        }
+        
+        .brand-name {
+            display: inline-block;
+            margin-left: 10px;
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 0.5px;
+            vertical-align: middle;
+        }
+        
+        @media only screen and (max-width: 600px) {
+            .email-wrapper {
+                margin: 10px;
+                border-radius: 12px;
+            }
+            
+            .header,
+            .content,
+            .footer {
+                padding: 25px 20px;
+            }
+            
+            .otp-code {
+                font-size: 28px;
+                letter-spacing: 6px;
+                padding: 15px 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .brand-name {
+                font-size: 18px;
+            }
+        }
+        
+        /* Motion preferences */
+        @media (prefers-reduced-motion: reduce) {
+            * { 
+                transition: none !important; 
+                animation: none !important; 
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-wrapper">
+        <div class="header">
+            <div class="logo">
+                <img src="logo.png" alt="INSU-SYNC Logo" />
+            </div>
+            <div class="brand-name">INSU-SYNC</div>
+            <h1>Account Verification</h1>
+            <p>Complete your registration with the code below</p>
+        </div>
+        
+        <div class="content">
+            <div class="greeting">Dear User,</div>
+            
+            <div class="message">
+                Thank you for creating an account with INSU-SYNC. To ensure the security of your account 
+                and complete the registration process, please verify your email address using the 
+                one-time password provided below.
+            </div>
+            
+            <div class="otp-section">
+                <div class="otp-label">Verification Code</div>
+                <div class="otp-code">739512</div>
+                <div style="margin-top: 15px; font-size: 14px; color: #686d76;">
+                    This code will expire in 15 minutes
+                </div>
+            </div>
+            
+
+            
+            <div class="security-note">
+                <strong>🔐 Security Notice:</strong>
+                For your protection, never share this verification code with anyone. Our team will never 
+                ask for this code via phone, email, or any other communication method.
+            </div>
+            
+            <div class="divider"></div>
+            
+            <p style="font-size: 14px; color: #686d76; margin: 0;">
+                If you did not request this verification code, please disregard this email. 
+                No further action is required, and your account remains secure.
+            </p>
+        </div>
+        
+        <div class="footer">
+            <div class="company-info">
+                <div class="company-name">INSU-SYNC</div>
+                <div class="company-address">
+                    Insurance Analytics Platform<br>
+                    Predictive Risk Management Solutions<br>
+                    Mumbai, Maharashtra, India
+                </div>
+            </div>
+            
+            <div class="support-info">
+                Need help? Contact our support team at 
+                <a href="mailto:support@insu-sync.com">support@insu-sync.com</a>
+                or visit our <a href="#">Help Center</a>
+            </div>
+            
+            <div class="disclaimer">
+                This is an automated message sent from a monitored email address. 
+                Please do not reply directly to this email. All communications are 
+                sent in accordance with our Privacy Policy and Terms of Service.
+                © 2025 INSU-SYNC. All rights reserved.
+            </div>
+        </div>
+    </div>
+</body>
+</html>
