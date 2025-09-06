@@ -15,7 +15,8 @@ In today's healthcare landscape, organizations face the dual challenge of improv
 - Identify areas for improvement  
 - Receive actionable recommendations  
 
-A key highlight for executives is the **"What-If Calculator"**,  which simulates intervention strategies to estimate potential impacts on performance scores and financial outcomes.And ** "recommendation" ** using Gemini APi.
+A key highlight for executives is the **"What-If Calculator"**, which simulates intervention strategies to estimate potential impacts on performance scores and financial outcomes.  
+Additionally, the platform provides **personalized recommendations** powered by the **Gemini API**.
 
 ---
 
@@ -26,19 +27,21 @@ A key highlight for executives is the **"What-If Calculator"**,  which simulates
 - **💡 Actionable Recommendations**: Suggests targeted actions to close care gaps and boost performance.  
 - **🧮 What-If Calculator (Executives)**: Simulates strategies and projects their impact on scores & ROI.  
 - **👥 Role-Based Access**: Tailored features for Executives and Caretakers.  
+- **🔐 OTP Authentication**: Secure login with **One-Time Passwords (OTP)** via email for enhanced user authentication.  
 
 ---
 
 ## 🛠️ Technical Stack & Features
-- **Backend**: [Flask] – lightweight Python framework for server-side logic  
+- **Backend**: Flask – lightweight Python framework for server-side logic  
 - **Frontend**: HTML, CSS – responsive UI  
-- **Visualization**: [Chart.js] – interactive charts & dashboards  
+- **Visualization**: Chart.js – interactive charts & dashboards  
 - **Machine Learning**:  
-  - [Scikit-learn]
-  - [XGBoost]
-  - [Random Forest]
+  - Scikit-learn  
+  - XGBoost  
+  - Random Forest  
 - **Database**: SQLite – lightweight, serverless storage  
-- **API Integration**: Gemini API – powers the "What-If Calculator"  
+- **API Integration**: Gemini API – powers the "What-If Calculator" and recommendation system  
+- **Authentication**: Flask-Mail / Twilio (for OTP delivery via email or SMS)  
 - **Deployment**: AWS EC2 – scalable, reliable hosting  
 
 ---
@@ -48,8 +51,11 @@ A key highlight for executives is the **"What-If Calculator"**,  which simulates
   - Access strategic insights  
   - ROI-focused recommendations  
   - Use the **What-If Calculator** for scenario simulations  
+
 - **Caretakers**  
-  - Personalized chatbot for plan Suggestion
+  - Personalized chatbot for plan suggestions  
+  - Care-gap closure alerts  
+  - Role-based dashboards  
 
 ---
 
