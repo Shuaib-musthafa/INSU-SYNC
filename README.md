@@ -1,6 +1,6 @@
 # INSU-SYNC: Medicare Advantage Star Ratings Optimization Platform
 
-**Live Demo:** [http://65.2.170.209/](http://65.2.170.209/)
+**Live Demo:** [(http://3.110.131.222/)]
 
 ---
 
